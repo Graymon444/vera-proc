@@ -3,9 +3,9 @@ import { Link } from 'react-router-dom'
 import { getAuditLog } from '../api/client'
 
 const EV = {
-  submitted: { label: '📥 Submitted',   color: '#0F6E56', bg: '#E1F5EE', border: '#A8DCC7' },
+  submitted: { label: '📥 Submitted',   color: '#0D6B4A', bg: '#E2F4EC', border: '#A5D9C0' },
   analyzed:  { label: '🤖 AI Analyzed', color: '#5B5BD6', bg: '#EDEDF9', border: '#BCBCE0' },
-  reviewed:  { label: '👤 Reviewed',    color: '#0F6E56', bg: '#E1F5EE', border: '#A8DCC7' },
+  reviewed:  { label: '👤 Reviewed',    color: '#0D6B4A', bg: '#E2F4EC', border: '#A5D9C0' },
 }
 
 function fmt(iso) {
@@ -32,7 +32,7 @@ export default function AuditLog() {
     <div style={{ maxWidth: 1100, margin: '0 auto', padding: '32px 24px' }}>
       <div style={{ marginBottom: 20 }}>
         <h1 style={{ margin: 0 }}>Audit Log</h1>
-        <p style={{ margin: '4px 0 0', fontSize: 14, color: '#5F5E5A' }}>
+        <p style={{ margin: '4px 0 0', fontSize: 14, color: '#5C5750' }}>
           Immutable record of all system and reviewer actions
         </p>
       </div>
@@ -40,8 +40,8 @@ export default function AuditLog() {
       {/* Disclaimer banner */}
       <div style={{
         padding: '10px 14px',
-        background: '#FAEEDA', border: '0.5px solid #E0C27A',
-        borderRadius: 8, fontSize: 12, color: '#633806',
+        background: '#FAF0DC', border: '0.5px solid #DDBF78',
+        borderRadius: 8, fontSize: 12, color: '#613604',
         marginBottom: 20, lineHeight: 1.5,
       }}>
         ⚠ Events tagged [Demo] originate from synthetic data and do not represent real
@@ -57,7 +57,7 @@ export default function AuditLog() {
         </div>
       ) : logs.length === 0 ? (
         /* Empty state */
-        <div className="v-card no-hover" style={{ padding: '64px 24px', textAlign: 'center', color: '#9B9A96' }}>
+        <div className="v-card no-hover" style={{ padding: '64px 24px', textAlign: 'center', color: '#948E87' }}>
           <div style={{ fontSize: 32, marginBottom: 8 }}>◷</div>
           <p style={{ fontSize: 14, margin: 0 }}>No audit events yet</p>
         </div>
@@ -67,14 +67,14 @@ export default function AuditLog() {
           <div style={{ overflowX: 'auto' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
               <thead>
-                <tr style={{ background: '#F1EFE8', borderBottom: '0.5px solid #D3D1C7' }}>
+                <tr style={{ background: '#F5F2EC', borderBottom: '0.5px solid #D6D1C8' }}>
                   {['Time', 'Event', 'Submission', 'Actor', 'Details'].map(h => (
                     <th key={h} style={{
                       padding: '10px 16px',
                       textAlign: 'left',
                       fontSize: 11,
                       fontWeight: 500,
-                      color: '#9B9A96',
+                      color: '#948E87',
                       textTransform: 'uppercase',
                       letterSpacing: '0.04em',
                       whiteSpace: 'nowrap',
@@ -88,18 +88,18 @@ export default function AuditLog() {
                 {logs.map(log => {
                   const cfg = EV[log.event_type] || {
                     label:  `◷ ${log.event_type}`,
-                    color:  '#9B9A96',
-                    bg:     '#F1EFE8',
-                    border: '#D3D1C7',
+                    color:  '#948E87',
+                    bg:     '#F5F2EC',
+                    border: '#D6D1C8',
                   }
                   return (
                     <tr
                       key={log.id}
-                      style={{ borderBottom: '0.5px solid #D3D1C7', transition: 'background 150ms' }}
-                      onMouseEnter={e => { e.currentTarget.style.background = '#F8F7F3' }}
+                      style={{ borderBottom: '0.5px solid #D6D1C8', transition: 'background 150ms' }}
+                      onMouseEnter={e => { e.currentTarget.style.background = '#F2EFE8' }}
                       onMouseLeave={e => { e.currentTarget.style.background = 'transparent' }}
                     >
-                      <td style={{ padding: '11px 16px', fontSize: 11, color: '#9B9A96', whiteSpace: 'nowrap' }}>
+                      <td style={{ padding: '11px 16px', fontSize: 11, color: '#948E87', whiteSpace: 'nowrap' }}>
                         {fmt(log.timestamp)}
                       </td>
                       <td style={{ padding: '11px 16px' }}>
@@ -116,28 +116,28 @@ export default function AuditLog() {
                         {log.submission_id ? (
                           <Link
                             to={`/review/${log.submission_id}`}
-                            style={{ fontSize: 12, color: '#1D9E75', textDecoration: 'none', fontWeight: 500 }}
+                            style={{ fontSize: 12, color: '#1A9B6E', textDecoration: 'none', fontWeight: 500 }}
                           >
                             #{log.submission_id}
                           </Link>
                         ) : '—'}
                       </td>
-                      <td style={{ padding: '11px 16px', fontSize: 12, color: '#5F5E5A' }}>
+                      <td style={{ padding: '11px 16px', fontSize: 12, color: '#5C5750' }}>
                         {log.actor || '—'}
                       </td>
                       <td style={{ padding: '11px 16px' }}>
                         <div style={{
-                          fontSize: 12, color: '#5F5E5A',
+                          fontSize: 12, color: '#5C5750',
                           display: 'flex', gap: 12, flexWrap: 'wrap',
                         }}>
                           {Object.entries(log.event_data || {})
                             .filter(([k]) => k !== 'source')
                             .map(([k, v]) => (
                               <span key={k}>
-                                <span style={{ color: '#9B9A96', textTransform: 'capitalize' }}>
+                                <span style={{ color: '#948E87', textTransform: 'capitalize' }}>
                                   {k.replace(/_/g, ' ')}:{' '}
                                 </span>
-                                <span style={{ color: '#2C2C2A', fontWeight: 500 }}>
+                                <span style={{ color: '#2A2722', fontWeight: 500 }}>
                                   {String(v)}
                                 </span>
                               </span>

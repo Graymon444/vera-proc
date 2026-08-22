@@ -1,9 +1,9 @@
 import React from 'react'
 
 const CONFIG = {
-  High:   { dot: '#D85A30', bg: '#FAECE7', border: '#E8B89F', text: '#712B13', label: 'HIGH' },
-  Medium: { dot: '#BA7517', bg: '#FAEEDA', border: '#E0C27A', text: '#633806', label: 'MEDIUM' },
-  Low:    { dot: '#639922', bg: '#EAF3DE', border: '#AECB78', text: '#27500A', label: 'LOW' },
+  High:   { dot: '#D45A2A', bg: '#FAEDE8', border: '#E6B09A', text: '#6E2910', label: 'HIGH' },
+  Medium: { dot: '#B87215', bg: '#FAF0DC', border: '#DDBF78', text: '#613604', label: 'MEDIUM' },
+  Low:    { dot: '#5E9420', bg: '#EBF4DF', border: '#ABCA76', text: '#264E08', label: 'LOW' },
 }
 
 /**

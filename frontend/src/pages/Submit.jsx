@@ -47,10 +47,10 @@ function Field({ label, hint, required, children }) {
     <div>
       <label className="v-label">
         {label}
-        {required && <span style={{ color: '#D85A30', marginLeft: 3 }}>*</span>}
+        {required && <span style={{ color: '#D45A2A', marginLeft: 3 }}>*</span>}
       </label>
       {hint && (
-        <p style={{ fontSize: 11, color: '#9B9A96', margin: '-2px 0 6px', lineHeight: 1.4 }}>
+        <p style={{ fontSize: 11, color: '#948E87', margin: '-2px 0 6px', lineHeight: 1.4 }}>
           {hint}
         </p>
       )}
@@ -119,7 +119,7 @@ export default function Submit() {
     <div style={{ maxWidth: 720, margin: '0 auto', padding: '32px 24px' }}>
       <div style={{ marginBottom: 24 }}>
         <h1 style={{ margin: 0 }}>New Procurement Submission</h1>
-        <p style={{ margin: '6px 0 0', fontSize: 14, color: '#5F5E5A' }}>
+        <p style={{ margin: '6px 0 0', fontSize: 14, color: '#5C5750' }}>
           Submit a procurement request for AI-assisted risk assessment.
         </p>
       </div>
@@ -127,8 +127,8 @@ export default function Submit() {
       {/* Advisory notice */}
       <div style={{
         padding: '10px 14px',
-        background: '#E1F5EE', border: '0.5px solid #A8DCC7',
-        borderRadius: 8, fontSize: 13, color: '#0F6E56',
+        background: '#E2F4EC', border: '0.5px solid #A5D9C0',
+        borderRadius: 8, fontSize: 13, color: '#0D6B4A',
         marginBottom: 20, lineHeight: 1.5,
       }}>
         <strong>AI Advisory System</strong> — After submission, VERA will automatically analyze
@@ -285,8 +285,8 @@ export default function Submit() {
         {error && (
           <div style={{
             padding: '10px 14px',
-            background: '#FAECE7', border: '0.5px solid #E8B89F',
-            borderRadius: 8, fontSize: 13, color: '#712B13',
+            background: '#FAEDE8', border: '0.5px solid #E6B09A',
+            borderRadius: 8, fontSize: 13, color: '#6E2910',
           }}>
             {error}
           </div>

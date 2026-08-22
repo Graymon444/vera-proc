@@ -25,7 +25,7 @@ function DataRow({ label, value, alert = false }) {
   return (
     <div className="v-data-row">
       <span className="v-data-row-label">{label}</span>
-      <span className="v-data-row-value" style={alert ? { color: '#D85A30' } : undefined}>
+      <span className="v-data-row-value" style={alert ? { color: '#D45A2A' } : undefined}>
         {value}
       </span>
     </div>
@@ -61,7 +61,7 @@ export default function ReviewDetail() {
     return (
       <div style={{
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        height: '60vh', color: '#9B9A96',
+        height: '60vh', color: '#948E87',
       }}>
         Loading...
       </div>
@@ -70,7 +70,7 @@ export default function ReviewDetail() {
 
   if (!data) {
     return (
-      <div style={{ maxWidth: 800, margin: '80px auto', textAlign: 'center', color: '#9B9A96' }}>
+      <div style={{ maxWidth: 800, margin: '80px auto', textAlign: 'center', color: '#948E87' }}>
         <p>Submission not found.</p>
         <Link
           to="/queue"
@@ -87,10 +87,10 @@ export default function ReviewDetail() {
   const budgetOver = s.requested_amount > s.budget_available
 
   /* Risk colors for banner */
-  const lvlBg     = { High: '#FAECE7', Medium: '#FAEEDA', Low: '#EAF3DE' }
-  const lvlBorder = { High: '#E8B89F', Medium: '#E0C27A', Low: '#AECB78' }
-  const bannerBg  = a ? (lvlBg[a.risk_level]     || '#F1EFE8') : '#F1EFE8'
-  const bannerBrd = a ? (lvlBorder[a.risk_level] || '#D3D1C7') : '#D3D1C7'
+  const lvlBg     = { High: '#FAEDE8', Medium: '#FAF0DC', Low: '#EBF4DF' }
+  const lvlBorder = { High: '#E6B09A', Medium: '#DDBF78', Low: '#ABCA76' }
+  const bannerBg  = a ? (lvlBg[a.risk_level]     || '#F5F2EC') : '#F5F2EC'
+  const bannerBrd = a ? (lvlBorder[a.risk_level] || '#D6D1C8') : '#D6D1C8'
 
   const cleanTitle = s.title
     .replace(/^\[SYNTHETIC[^\]]*\]\s*/, '')
@@ -104,14 +104,14 @@ export default function ReviewDetail() {
         aria-label="Breadcrumb"
         style={{
           display: 'flex', alignItems: 'center', gap: 6,
-          fontSize: 13, color: '#9B9A96', marginBottom: 20,
+          fontSize: 13, color: '#948E87', marginBottom: 20,
         }}
       >
-        <Link to="/"      style={{ color: '#9B9A96', textDecoration: 'none' }}>Dashboard</Link>
+        <Link to="/"      style={{ color: '#948E87', textDecoration: 'none' }}>Dashboard</Link>
         <span>/</span>
-        <Link to="/queue" style={{ color: '#9B9A96', textDecoration: 'none' }}>Queue</Link>
+        <Link to="/queue" style={{ color: '#948E87', textDecoration: 'none' }}>Queue</Link>
         <span>/</span>
-        <span style={{ color: '#2C2C2A' }}>#{s.id}</span>
+        <span style={{ color: '#2A2722' }}>#{s.id}</span>
       </nav>
 
       {/* ── Risk banner ── */}
@@ -136,15 +136,15 @@ export default function ReviewDetail() {
               <h1 style={{ margin: 0, fontSize: 20 }}>{cleanTitle}</h1>
               {s.is_synthetic && (
                 <span style={{
-                  fontSize: 11, background: '#FAEEDA', color: '#633806',
-                  border: '0.5px solid #E0C27A', borderRadius: 4, padding: '2px 8px',
+                  fontSize: 11, background: '#FAF0DC', color: '#613604',
+                  border: '0.5px solid #DDBF78', borderRadius: 4, padding: '2px 8px',
                 }}>
                   ⚠ Synthetic Demo
                 </span>
               )}
             </div>
             <div style={{
-              fontSize: 13, color: '#5F5E5A',
+              fontSize: 13, color: '#5C5750',
               display: 'flex', gap: 12, flexWrap: 'wrap',
             }}>
               <span>{s.vendor_name}</span>
@@ -185,7 +185,7 @@ export default function ReviewDetail() {
           {a?.explanation && (
             <Collapsible title="AI Explanation" defaultOpen={false}>
               <pre style={{
-                fontSize: 13, color: '#2C2C2A', lineHeight: 1.7,
+                fontSize: 13, color: '#2A2722', lineHeight: 1.7,
                 whiteSpace: 'pre-wrap', fontFamily: 'inherit', margin: 0,
               }}>
                 {a.explanation}
@@ -242,11 +242,11 @@ export default function ReviewDetail() {
         display: 'none',
         position: 'fixed', bottom: 0, left: 0, right: 0,
         background: '#fff',
-        borderTop: '0.5px solid #D3D1C7',
+        borderTop: '0.5px solid #D6D1C8',
         padding: '12px 16px',
         gap: 8,
         zIndex: 50,
-        boxShadow: '0 -2px 8px rgba(0,0,0,0.08)',
+        boxShadow: '0 -2px 8px rgba(42,39,34,0.07)',
       }}>
         <button
           type="button"

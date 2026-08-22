@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
 
 const SEV = {
-  high:   { color: '#D85A30', bg: '#FAECE7', border: '#D85A30', label: 'High' },
-  medium: { color: '#BA7517', bg: '#FAEEDA', border: '#BA7517', label: 'Medium' },
-  low:    { color: '#639922', bg: '#EAF3DE', border: '#639922', label: 'Low' },
+  high:   { color: '#D45A2A', bg: '#FAEDE8', border: '#D45A2A', label: 'High' },
+  medium: { color: '#B87215', bg: '#FAF0DC', border: '#B87215', label: 'Medium' },
+  low:    { color: '#5E9420', bg: '#EBF4DF', border: '#5E9420', label: 'Low' },
 }
 
 function formatRp(n) {
@@ -44,7 +44,7 @@ function IndicatorItem({ flag }) {
         </svg>
 
         <div style={{ flex: 1 }}>
-          <div style={{ fontSize: 14, color: '#2C2C2A', lineHeight: 1.5 }}>
+          <div style={{ fontSize: 14, color: '#2A2722', lineHeight: 1.5 }}>
             {flag.label}
           </div>
 
@@ -57,19 +57,19 @@ function IndicatorItem({ flag }) {
           }}>
             <div style={{ marginTop: 10, display: 'flex', flexDirection: 'column', gap: 4 }}>
               {flag.value != null && (
-                <div style={{ fontSize: 12, color: '#5F5E5A' }}>
+                <div style={{ fontSize: 12, color: '#5C5750' }}>
                   <span>Your bid: </span>
-                  <span style={{ color: '#2C2C2A', fontWeight: 500 }}>{formatRp(flag.value)}</span>
+                  <span style={{ color: '#2A2722', fontWeight: 500 }}>{formatRp(flag.value)}</span>
                 </div>
               )}
               {flag.threshold != null && (
-                <div style={{ fontSize: 12, color: '#5F5E5A' }}>
+                <div style={{ fontSize: 12, color: '#5C5750' }}>
                   <span>Reference: </span>
-                  <span style={{ color: '#2C2C2A', fontWeight: 500 }}>{formatRp(flag.threshold)}</span>
+                  <span style={{ color: '#2A2722', fontWeight: 500 }}>{formatRp(flag.threshold)}</span>
                 </div>
               )}
               {flag.deviation_pct != null && (
-                <div style={{ fontSize: 12, color: '#5F5E5A' }}>
+                <div style={{ fontSize: 12, color: '#5C5750' }}>
                   <span>Deviation: </span>
                   <span style={{ color: s.color, fontWeight: 500 }}>
                     {flag.deviation_pct > 0 ? '+' : ''}
@@ -77,7 +77,7 @@ function IndicatorItem({ flag }) {
                   </span>
                 </div>
               )}
-              <div style={{ fontSize: 11, color: '#9B9A96', marginTop: 4 }}>
+              <div style={{ fontSize: 11, color: '#948E87', marginTop: 4 }}>
                 Potential risk indicator — does not confirm wrongdoing
               </div>
             </div>

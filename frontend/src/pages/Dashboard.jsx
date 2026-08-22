@@ -19,19 +19,19 @@ function fmt(iso) {
 }
 
 /* ── risk color helpers ── */
-const RISK_COLOR  = { High: '#D85A30', Medium: '#BA7517', Low: '#639922' }
-const RISK_BG     = { High: '#FAECE7', Medium: '#FAEEDA', Low: '#EAF3DE' }
-const RISK_BORDER = { High: '#E8B89F', Medium: '#E0C27A', Low: '#AECB78' }
+const RISK_COLOR  = { High: '#D45A2A', Medium: '#B87215', Low: '#5E9420' }
+const RISK_BG     = { High: '#FAEDE8', Medium: '#FAF0DC', Low: '#EBF4DF' }
+const RISK_BORDER = { High: '#E6B09A', Medium: '#DDBF78', Low: '#ABCA76' }
 
 /* ── Quick metric card ── */
-function MetricCard({ value, label, color = '#2C2C2A', bg = '#F1EFE8', border = '#D3D1C7' }) {
+function MetricCard({ value, label, color = '#2A2722', bg = '#F5F2EC', border = '#D6D1C8' }) {
   return (
     <div
       className="v-card no-hover"
       style={{ background: bg, border: `0.5px solid ${border}`, padding: '16px', textAlign: 'center' }}
     >
       <div style={{ fontSize: 28, fontWeight: 500, color, lineHeight: 1 }}>{value}</div>
-      <div style={{ fontSize: 12, color: '#5F5E5A', marginTop: 6, lineHeight: 1.4 }}>{label}</div>
+      <div style={{ fontSize: 12, color: '#5C5750', marginTop: 6, lineHeight: 1.4 }}>{label}</div>
     </div>
   )
 }
@@ -61,9 +61,9 @@ function Chip({ label, color, bg, border }) {
 /* ── Submission queue card ── */
 function SubmissionCard({ item }) {
   const lv = item.risk_level
-  const color  = RISK_COLOR[lv]  || '#D3D1C7'
-  const bg     = RISK_BG[lv]     || '#F1EFE8'
-  const border = RISK_BORDER[lv] || '#D3D1C7'
+  const color  = RISK_COLOR[lv]  || '#D6D1C8'
+  const bg     = RISK_BG[lv]     || '#F5F2EC'
+  const border = RISK_BORDER[lv] || '#D6D1C8'
 
   /* build indicator chips */
   const chips = []
@@ -76,17 +76,17 @@ function SubmissionCard({ item }) {
     const sign = priceFlag.deviation_pct > 0 ? '+' : ''
     chips.push({
       label: `Price ${sign}${Number(priceFlag.deviation_pct).toFixed(0)}%`,
-      color: '#D85A30', bg: '#FAECE7', border: '#E8B89F',
+      color: '#D45A2A', bg: '#FAEDE8', border: '#E6B09A',
     })
   }
   if (vendorFlag) {
     const n = vendorFlag.vendor_count ?? vendorFlag.value
-    if (n != null) chips.push({ label: `Vendor ${n}x`, color: '#BA7517', bg: '#FAEEDA', border: '#E0C27A' })
+    if (n != null) chips.push({ label: `Vendor ${n}x`, color: '#B87215', bg: '#FAF0DC', border: '#DDBF78' })
   }
   if (budgetFlag?.deviation_pct != null) {
     chips.push({
       label: `Budget ${Number(budgetFlag.deviation_pct).toFixed(0)}%`,
-      color: '#639922', bg: '#EAF3DE', border: '#AECB78',
+      color: '#5E9420', bg: '#EBF4DF', border: '#ABCA76',
     })
   }
 
@@ -105,15 +105,15 @@ function SubmissionCard({ item }) {
         borderLeft: `4px solid ${color}`,
         borderRadius: 12,
         padding: '14px 16px',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+        boxShadow: '0 2px 8px rgba(42,39,34,0.06)',
         transition: 'box-shadow 200ms cubic-bezier(0.2,0,0.8,1), transform 200ms cubic-bezier(0.2,0,0.8,1)',
       }}
       onMouseEnter={e => {
-        e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.12)'
+        e.currentTarget.style.boxShadow = '0 4px 12px rgba(42,39,34,0.11)'
         e.currentTarget.style.transform = 'scale(1.02)'
       }}
       onMouseLeave={e => {
-        e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.06)'
+        e.currentTarget.style.boxShadow = '0 2px 8px rgba(42,39,34,0.06)'
         e.currentTarget.style.transform = 'scale(1)'
       }}
     >
@@ -121,17 +121,17 @@ function SubmissionCard({ item }) {
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 3 }}>
-            <span style={{ fontSize: 14, fontWeight: 500, color: '#2C2C2A', lineHeight: 1.4 }}>
+            <span style={{ fontSize: 14, fontWeight: 500, color: '#2A2722', lineHeight: 1.4 }}>
               {cleanTitle}
             </span>
             {item.is_synthetic && (
               <span style={{
-                fontSize: 10, color: '#9B9A96', background: '#F1EFE8',
-                border: '0.5px solid #D3D1C7', borderRadius: 4, padding: '1px 6px',
+                fontSize: 10, color: '#948E87', background: '#F5F2EC',
+                border: '0.5px solid #D6D1C8', borderRadius: 4, padding: '1px 6px',
               }}>Demo</span>
             )}
           </div>
-          <div style={{ fontSize: 12, color: '#9B9A96', marginBottom: 8 }}>
+          <div style={{ fontSize: 12, color: '#948E87', marginBottom: 8 }}>
             {item.category} · {fmt(item.submitted_at || item.procurement_date)}
           </div>
           {/* Indicator chips */}
@@ -164,8 +164,8 @@ function SubmissionCard({ item }) {
       </div>
 
       {/* Bottom row */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 10, paddingTop: 8, borderTop: '0.5px solid #D3D1C720' }}>
-        <span style={{ fontSize: 11, color: '#9B9A96' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 10, paddingTop: 8, borderTop: '0.5px solid #D6D1C820' }}>
+        <span style={{ fontSize: 11, color: '#948E87' }}>
           {fmtRp(item.requested_amount)} · #{item.submission_id}
         </span>
         <RiskPill level={lv} />
@@ -212,18 +212,18 @@ export default function Dashboard() {
 
   const chartData = stats
     ? [
-        { name: 'High',   value: stats.high_risk,   fill: '#D85A30' },
-        { name: 'Medium', value: stats.medium_risk,  fill: '#BA7517' },
-        { name: 'Low',    value: stats.low_risk,     fill: '#639922' },
+        { name: 'High',   value: stats.high_risk,   fill: '#D45A2A' },
+        { name: 'Medium', value: stats.medium_risk,  fill: '#B87215' },
+        { name: 'Low',    value: stats.low_risk,     fill: '#5E9420' },
       ]
     : []
 
   const r2     = evalData?.r2_score
   const r2Color =
-    r2 == null ? '#9B9A96' :
-    r2 >= 0.8  ? '#639922' :
-    r2 >= 0.6  ? '#BA7517' :
-                 '#D85A30'
+    r2 == null ? '#948E87' :
+    r2 >= 0.8  ? '#5E9420' :
+    r2 >= 0.6  ? '#B87215' :
+                 '#D45A2A'
 
   /* Derived quick metrics */
   const recentList = stats?.recent_analyses || []
@@ -247,7 +247,7 @@ export default function Dashboard() {
       }}>
         <div>
           <h1 style={{ margin: 0 }}>Dashboard</h1>
-          <p style={{ margin: '4px 0 0', fontSize: 14, color: '#5F5E5A' }}>
+          <p style={{ margin: '4px 0 0', fontSize: 14, color: '#5C5750' }}>
             AI-assisted procurement risk overview
           </p>
         </div>
@@ -273,9 +273,9 @@ export default function Dashboard() {
       {/* ── Seed message ── */}
       {seedMsg && (
         <div style={{
-          padding: '10px 14px', background: '#E1F5EE',
-          border: '0.5px solid #A8DCC7', borderRadius: 8,
-          fontSize: 12, color: '#0F6E56', marginBottom: 20,
+          padding: '10px 14px', background: '#E2F4EC',
+          border: '0.5px solid #A5D9C0', borderRadius: 8,
+          fontSize: 12, color: '#0D6B4A', marginBottom: 20,
         }}>
           ✓ {seedMsg} — All records are synthetic demo data, not real procurement.
         </div>
@@ -309,23 +309,23 @@ export default function Dashboard() {
               <MetricCard
                 value={avgRisk}
                 label="Avg Risk Score"
-                color={avgRisk >= 70 ? '#D85A30' : avgRisk >= 40 ? '#BA7517' : '#639922'}
-                bg={avgRisk >= 70 ? '#FAECE7' : avgRisk >= 40 ? '#FAEEDA' : '#EAF3DE'}
-                border={avgRisk >= 70 ? '#E8B89F' : avgRisk >= 40 ? '#E0C27A' : '#AECB78'}
+                color={avgRisk >= 70 ? '#D45A2A' : avgRisk >= 40 ? '#B87215' : '#5E9420'}
+                bg={avgRisk >= 70 ? '#FAEDE8' : avgRisk >= 40 ? '#FAF0DC' : '#EBF4DF'}
+                border={avgRisk >= 70 ? '#E6B09A' : avgRisk >= 40 ? '#DDBF78' : '#ABCA76'}
               />
               <MetricCard
                 value={maxRisk}
                 label="Max Risk Score"
-                color={maxRisk >= 70 ? '#D85A30' : maxRisk >= 40 ? '#BA7517' : '#639922'}
-                bg={maxRisk >= 70 ? '#FAECE7' : maxRisk >= 40 ? '#FAEEDA' : '#EAF3DE'}
-                border={maxRisk >= 70 ? '#E8B89F' : maxRisk >= 40 ? '#E0C27A' : '#AECB78'}
+                color={maxRisk >= 70 ? '#D45A2A' : maxRisk >= 40 ? '#B87215' : '#5E9420'}
+                bg={maxRisk >= 70 ? '#FAEDE8' : maxRisk >= 40 ? '#FAF0DC' : '#EBF4DF'}
+                border={maxRisk >= 70 ? '#E6B09A' : maxRisk >= 40 ? '#DDBF78' : '#ABCA76'}
               />
               <MetricCard
                 value={fmtRp(flaggedBudget)}
                 label="High-Risk Budget"
-                color="#D85A30"
-                bg="#FAECE7"
-                border="#E8B89F"
+                color="#D45A2A"
+                bg="#FAEDE8"
+                border="#E6B09A"
               />
             </div>
           </section>
@@ -338,11 +338,11 @@ export default function Dashboard() {
             {/* Bar chart */}
             <div className="v-card no-hover" style={{ padding: '16px' }}>
               <h2 style={{ margin: '0 0 4px' }}>Risk Distribution</h2>
-              <p style={{ margin: '0 0 16px', fontSize: 12, color: '#9B9A96' }}>
+              <p style={{ margin: '0 0 16px', fontSize: 12, color: '#948E87' }}>
                 Submissions by risk level
               </p>
               {chartData.every(d => d.value === 0) ? (
-                <div style={{ textAlign: 'center', padding: '32px 0', color: '#9B9A96', fontSize: 13 }}>
+                <div style={{ textAlign: 'center', padding: '32px 0', color: '#948E87', fontSize: 13 }}>
                   Load demo data to see the chart
                 </div>
               ) : (
@@ -350,18 +350,18 @@ export default function Dashboard() {
                   <BarChart data={chartData} barCategoryGap="35%">
                     <XAxis
                       dataKey="name" axisLine={false} tickLine={false}
-                      tick={{ fontSize: 12, fill: '#5F5E5A' }}
+                      tick={{ fontSize: 12, fill: '#5C5750' }}
                     />
                     <YAxis
                       allowDecimals={false} axisLine={false} tickLine={false}
-                      tick={{ fontSize: 11, fill: '#9B9A96' }}
+                      tick={{ fontSize: 11, fill: '#948E87' }}
                     />
                     <Tooltip
                       contentStyle={{
-                        borderRadius: 8, border: '0.5px solid #D3D1C7',
-                        fontSize: 12, boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+                        borderRadius: 8, border: '0.5px solid #D6D1C8',
+                        fontSize: 12, boxShadow: '0 2px 8px rgba(42,39,34,0.07)',
                       }}
-                      cursor={{ fill: '#F1EFE8' }}
+                      cursor={{ fill: '#F5F2EC' }}
                     />
                     <Bar dataKey="value" radius={[6, 6, 0, 0]}>
                       {chartData.map((e, i) => <Cell key={i} fill={e.fill} />)}
@@ -377,7 +377,7 @@ export default function Dashboard() {
                 <span style={{ fontSize: 16 }}>🤖</span>
                 <h2 style={{ margin: 0 }}>Model Validation</h2>
               </div>
-              <p style={{ margin: '0 0 16px', fontSize: 12, color: '#9B9A96' }}>
+              <p style={{ margin: '0 0 16px', fontSize: 12, color: '#948E87' }}>
                 ML ↔ Rule Engine alignment
               </p>
 
@@ -387,7 +387,7 @@ export default function Dashboard() {
                     <div style={{ fontSize: 40, fontWeight: 500, color: r2Color, lineHeight: 1 }}>
                       {evalData.r2_score}
                     </div>
-                    <div style={{ fontSize: 12, color: '#5F5E5A', marginTop: 4 }}>R² Score</div>
+                    <div style={{ fontSize: 12, color: '#5C5750', marginTop: 4 }}>R² Score</div>
                     <div style={{ fontSize: 13, fontWeight: 500, color: r2Color, marginTop: 6 }}>
                       {evalData.alignment_level} Alignment
                     </div>
@@ -400,19 +400,19 @@ export default function Dashboard() {
                       { l: 'Rule σ',   v: evalData.rule_score_std },
                     ].map(({ l, v }) => (
                       <div key={l} style={{
-                        background: '#F1EFE8', borderRadius: 8, padding: '8px', textAlign: 'center',
+                        background: '#F5F2EC', borderRadius: 8, padding: '8px', textAlign: 'center',
                       }}>
-                        <div style={{ fontSize: 11, color: '#9B9A96' }}>{l}</div>
-                        <div style={{ fontSize: 15, fontWeight: 500, color: '#2C2C2A' }}>{v}</div>
+                        <div style={{ fontSize: 11, color: '#948E87' }}>{l}</div>
+                        <div style={{ fontSize: 15, fontWeight: 500, color: '#2A2722' }}>{v}</div>
                       </div>
                     ))}
                   </div>
-                  <p style={{ fontSize: 11, color: '#9B9A96', lineHeight: 1.5, margin: 0 }}>
+                  <p style={{ fontSize: 11, color: '#948E87', lineHeight: 1.5, margin: 0 }}>
                     {evalData.interpretation}
                   </p>
                 </div>
               ) : (
-                <div style={{ padding: '24px 0', textAlign: 'center', color: '#9B9A96', fontSize: 13 }}>
+                <div style={{ padding: '24px 0', textAlign: 'center', color: '#948E87', fontSize: 13 }}>
                   {evalData?.message || 'Load data to run model evaluation'}
                 </div>
               )}
@@ -435,7 +435,7 @@ export default function Dashboard() {
             </div>
 
             {recentList.length === 0 ? (
-              <div className="v-card no-hover" style={{ padding: '48px 16px', textAlign: 'center', color: '#9B9A96' }}>
+              <div className="v-card no-hover" style={{ padding: '48px 16px', textAlign: 'center', color: '#948E87' }}>
                 <div style={{ fontSize: 32, marginBottom: 8 }}>📋</div>
                 <p style={{ margin: 0, fontSize: 14 }}>No submissions yet</p>
                 <p style={{ margin: '4px 0 0', fontSize: 12 }}>
@@ -460,8 +460,8 @@ export default function Dashboard() {
           {/* ── Prototype disclaimer ── */}
           <div style={{
             padding: '12px 16px',
-            background: '#FAEEDA', border: '0.5px solid #E0C27A',
-            borderRadius: 8, fontSize: 12, color: '#633806', lineHeight: 1.6,
+            background: '#FAF0DC', border: '0.5px solid #DDBF78',
+            borderRadius: 8, fontSize: 12, color: '#613604', lineHeight: 1.6,
           }}>
             <strong>⚠ Prototype Disclaimer:</strong> VERA is a research prototype.
             Risk thresholds and scoring weights are configurable assumptions — not official government standards.

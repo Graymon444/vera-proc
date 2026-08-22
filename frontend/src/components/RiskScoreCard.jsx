@@ -1,27 +1,9 @@
 import React from 'react'
 
 const LEVEL_CONFIG = {
-  High:   {
-    color: '#D85A30',
-    bg: '#FAECE7',
-    border: '#E8B89F',
-    label: 'HIGH RISK',
-    subtitle: 'Requires Verification',
-  },
-  Medium: {
-    color: '#BA7517',
-    bg: '#FAEEDA',
-    border: '#E0C27A',
-    label: 'MEDIUM RISK',
-    subtitle: 'Review Recommended',
-  },
-  Low:    {
-    color: '#639922',
-    bg: '#EAF3DE',
-    border: '#AECB78',
-    label: 'LOW RISK',
-    subtitle: 'Standard Review',
-  },
+  High:   { color: '#D45A2A', bg: '#FAEDE8', border: '#E6B09A', label: 'HIGH RISK',   subtitle: 'Requires Verification' },
+  Medium: { color: '#B87215', bg: '#FAF0DC', border: '#DDBF78', label: 'MEDIUM RISK', subtitle: 'Review Recommended' },
+  Low:    { color: '#5E9420', bg: '#EBF4DF', border: '#ABCA76', label: 'LOW RISK',    subtitle: 'Standard Review' },
 }
 
 export default function RiskScoreCard({ analysis }) {
@@ -46,18 +28,17 @@ export default function RiskScoreCard({ analysis }) {
         padding: '14px 16px 0',
       }}>
         <span style={{
-          fontSize: 11,
-          fontWeight: 500,
-          color: '#1D9E75',
-          background: '#E1F5EE',
-          border: '0.5px solid #A8DCC7',
+          fontSize: 11, fontWeight: 500,
+          color: '#1A9B6E',
+          background: '#E2F4EC',
+          border: '0.5px solid #A5D9C0',
           borderRadius: 4,
           padding: '2px 8px',
           letterSpacing: '0.04em',
         }}>
           AI ASSESSMENT
         </span>
-        <span style={{ fontSize: 11, color: '#9B9A96' }}>Not a final determination</span>
+        <span style={{ fontSize: 11, color: '#948E87' }}>Not a final determination</span>
       </div>
 
       {/* Centered score */}
@@ -70,7 +51,7 @@ export default function RiskScoreCard({ analysis }) {
         }}>
           {score}
         </div>
-        <div style={{ fontSize: 12, color: '#9B9A96', marginTop: 4 }}>out of 100</div>
+        <div style={{ fontSize: 12, color: '#948E87', marginTop: 4 }}>out of 100</div>
         <div style={{
           fontSize: 18,
           fontWeight: 500,
@@ -81,7 +62,7 @@ export default function RiskScoreCard({ analysis }) {
         }}>
           {c.label}
         </div>
-        <div style={{ fontSize: 13, color: '#5F5E5A', marginTop: 6 }}>
+        <div style={{ fontSize: 13, color: '#5C5750', marginTop: 6 }}>
           {c.subtitle}
         </div>
       </div>
@@ -101,19 +82,19 @@ export default function RiskScoreCard({ analysis }) {
           padding: '10px 12px',
           textAlign: 'center',
         }}>
-          <div style={{ fontSize: 11, color: '#5F5E5A', marginBottom: 2 }}>Rule-Based</div>
-          <div style={{ fontSize: 18, fontWeight: 500, color: '#2C2C2A' }}>
+          <div style={{ fontSize: 11, color: '#5C5750', marginBottom: 2 }}>Rule-Based</div>
+          <div style={{ fontSize: 18, fontWeight: 500, color: '#2A2722' }}>
             {analysis.rule_score ?? '—'}
           </div>
         </div>
         <div style={{
-          background: 'rgba(255,255,255,0.6)',
+          background: 'rgba(255,255,255,0.55)',
           borderRadius: 8,
           padding: '10px 12px',
           textAlign: 'center',
         }}>
-          <div style={{ fontSize: 11, color: '#5F5E5A', marginBottom: 2 }}>Indicators</div>
-          <div style={{ fontSize: 18, fontWeight: 500, color: '#2C2C2A' }}>
+          <div style={{ fontSize: 11, color: '#5C5750', marginBottom: 2 }}>Indicators</div>
+          <div style={{ fontSize: 18, fontWeight: 500, color: '#2A2722' }}>
             {(analysis.rule_flags || []).length}
           </div>
         </div>
@@ -121,11 +102,9 @@ export default function RiskScoreCard({ analysis }) {
 
       {/* Disclaimer */}
       <p style={{
-        fontSize: 11, color: '#9B9A96',
-        textAlign: 'center',
-        padding: '0 16px 14px',
-        lineHeight: 1.5,
-        margin: 0,
+        fontSize: 11, color: '#948E87',
+        textAlign: 'center', padding: '0 16px 14px',
+        lineHeight: 1.5, margin: 0,
       }}>
         ⚠ Thresholds are prototype assumptions, not official standards
       </p>

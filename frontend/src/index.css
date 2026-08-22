@@ -2,67 +2,97 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ─── VERA One UI Design Tokens ───────────────────────────────────────────── */
+/* ─── VERA Design Tokens — Warm Unified Palette ───────────────────────────── */
+/*
+  Satu ritme: warm-neutral dari page bg sampai ke teks.
+  Semua warna punya undertone warm (yellow-brown), tidak ada cool grey murni.
+  Primary teal dihangatkan ke arah emerald agar blend dengan warm surface.
+  Teks bukan charcoal hitam — pakai warm-brown near-black.
+*/
 :root {
-  --teal-50:  #E1F5EE;
-  --teal-500: #1D9E75;
-  --teal-900: #0F6E56;
+  /* Primary — Warm Emerald (trust, government, stability) */
+  --teal-50:  #E2F4EC;   /* warm mint background */
+  --teal-100: #C3E8D5;   /* hover tint */
+  --teal-500: #1A9B6E;   /* slightly warmer than pure teal */
+  --teal-900: #0D6B4A;   /* dark, readable on light bg */
 
-  --red-50:   #FAECE7;
-  --red-500:  #D85A30;
-  --red-900:  #712B13;
+  /* Risk — Warm Coral (attention, not alarm) */
+  --red-50:  #FAEDE8;
+  --red-500: #D45A2A;    /* shifted slightly toward orange-red, warmer */
+  --red-900: #6E2910;
 
-  --amber-50:  #FAEEDA;
-  --amber-500: #BA7517;
-  --amber-900: #633806;
+  /* Caution — Warm Amber */
+  --amber-50:  #FAF0DC;
+  --amber-500: #B87215;
+  --amber-900: #613604;
 
-  --green-50:  #EAF3DE;
-  --green-500: #639922;
-  --green-900: #27500A;
+  /* Safe — Warm Sage */
+  --green-50:  #EBF4DF;
+  --green-500: #5E9420;
+  --green-900: #264E08;
 
-  --gray-50:  #F1EFE8;
-  --gray-100: #FFFFFF;
-  --gray-600: #5F5E5A;
-  --gray-900: #2C2C2A;
-  --border-color: #D3D1C7;
+  /* Neutral surface — warm off-white system */
+  /* All greys have a subtle warm (beige/sand) undertone */
+  --surface-0:  #F5F2EC;   /* page background — warmer than before */
+  --surface-1:  #FEFCF8;   /* card background — warm white */
+  --surface-2:  #EDE9E1;   /* subtle recessed area */
 
-  /* Semantic aliases */
-  --surface-0: #F1EFE8;
-  --surface-1: #FFFFFF;
-  --ink-primary:   #2C2C2A;
-  --ink-secondary: #5F5E5A;
-  --ink-muted:     #9B9A96;
-  --ink-border:    #D3D1C7;
+  /* Ink — warm-tinted, NOT cool charcoal */
+  --ink-primary:   #2A2722;   /* warm near-black (brown undertone) */
+  --ink-secondary: #5C5750;   /* warm medium grey */
+  --ink-muted:     #948E87;   /* warm light grey */
+  --ink-border:    #D6D1C8;   /* warm hairline */
+  --ink-divider:   #EAE6DE;   /* very subtle separation */
 
+  /* Legacy aliases — keep for backwards compat */
+  --gray-50:  #F5F2EC;
+  --gray-100: #FEFCF8;
+  --gray-600: #5C5750;
+  --gray-900: #2A2722;
+  --border-color: #D6D1C8;
+
+  /* Radii */
   --radius-sm: 4px;
   --radius-md: 8px;
   --radius-lg: 12px;
+  --radius-xl: 16px;
 
-  --shadow-sm: 0 2px 8px rgba(0,0,0,0.08);
-  --shadow-md: 0 4px 12px rgba(0,0,0,0.12);
-  --shadow-lg: 0 8px 24px rgba(0,0,0,0.15);
+  /* Shadows — warm-tinted so they don't look cool/blue */
+  --shadow-sm: 0 2px 8px rgba(42, 39, 34, 0.07);
+  --shadow-md: 0 4px 12px rgba(42, 39, 34, 0.11);
+  --shadow-lg: 0 8px 24px rgba(42, 39, 34, 0.14);
 
+  /* Motion */
   --duration-fast: 150ms;
   --duration-base: 200ms;
   --duration-slow: 300ms;
   --easing: cubic-bezier(0.2, 0, 0.8, 1);
 }
 
-/* ─── Dark mode tokens ────────────────────────────────────────────────────── */
+/* ─── Dark mode — stays warm, just darker ────────────────────────────────── */
 @media (prefers-color-scheme: dark) {
   :root {
-    --gray-50:  #1C1C1A;
-    --gray-100: #2C2C2A;
-    --gray-600: #B4B2A9;
-    --gray-900: #F1EFE8;
-    --border-color: #3D3D3A;
+    --surface-0:  #1E1C19;   /* warm dark — not pure black */
+    --surface-1:  #2A2722;   /* warm dark card */
+    --surface-2:  #332F2A;   /* slightly lighter recessed */
 
-    --surface-0: #1C1C1A;
-    --surface-1: #2C2C2A;
-    --ink-primary:   #F1EFE8;
-    --ink-secondary: #B4B2A9;
-    --ink-muted:     #6B6A66;
-    --ink-border:    #3D3D3A;
+    --ink-primary:   #F0EDE7;   /* warm off-white */
+    --ink-secondary: #B5AFA7;
+    --ink-muted:     #6E6860;
+    --ink-border:    #3D3930;
+    --ink-divider:   #332F2A;
+
+    --gray-50:  #1E1C19;
+    --gray-100: #2A2722;
+    --gray-600: #B5AFA7;
+    --gray-900: #F0EDE7;
+    --border-color: #3D3930;
+
+    /* Tints stay warm in dark mode too */
+    --teal-50:  #1A2F27;
+    --red-50:   #2E1C17;
+    --amber-50: #2B2010;
+    --green-50: #1A2810;
   }
 }
 
@@ -278,9 +308,9 @@
   .v-skeleton {
     background: linear-gradient(
       90deg,
-      #E8E6DF 25%,
-      #F0EEE8 50%,
-      #E8E6DF 75%
+      #EAE7DF 25%,
+      #F3F0E8 50%,
+      #EAE7DF 75%
     );
     background-size: 200% 100%;
     animation: skeleton-pulse 1.6s ease-in-out infinite;

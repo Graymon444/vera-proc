@@ -17,34 +17,34 @@ export default function RiskDistributionCard({
     {
       count: high,
       label: 'High Risk',
-      color: '#D85A30',
-      bg: '#FAECE7',
-      border: '#E8B89F',
+      color: '#D45A2A',
+      bg: '#FAEDE8',
+      border: '#E6B09A',
     },
     {
       count: medium,
       label: 'Medium Risk',
-      color: '#BA7517',
-      bg: '#FAEEDA',
-      border: '#E0C27A',
+      color: '#B87215',
+      bg: '#FAF0DC',
+      border: '#DDBF78',
     },
     {
       count: low,
       label: 'Low Risk',
-      color: '#639922',
-      bg: '#EAF3DE',
-      border: '#AECB78',
+      color: '#5E9420',
+      bg: '#EBF4DF',
+      border: '#ABCA76',
     },
   ]
 
   const r2Color =
     r2Score == null
-      ? '#9B9A96'
+      ? '#948E87'
       : r2Score >= 0.8
-      ? '#639922'
+      ? '#5E9420'
       : r2Score >= 0.6
-      ? '#BA7517'
-      : '#D85A30'
+      ? '#B87215'
+      : '#D45A2A'
 
   const stats = [
     { label: 'Total', value: totalSubmissions },
@@ -88,7 +88,7 @@ export default function RiskDistributionCard({
             >
               {col.count}
             </div>
-            <div style={{ fontSize: 12, color: '#5F5E5A', lineHeight: 1.4 }}>
+            <div style={{ fontSize: 12, color: '#5C5750', lineHeight: 1.4 }}>
               {col.label}
             </div>
           </div>
@@ -98,7 +98,7 @@ export default function RiskDistributionCard({
       {/* Divider */}
       <div
         style={{
-          borderTop: '0.5px solid #D3D1C7',
+          borderTop: '0.5px solid #D6D1C8',
           marginBottom: 12,
         }}
       />
@@ -113,13 +113,13 @@ export default function RiskDistributionCard({
           flexWrap: 'wrap',
         }}
       >
-        <span style={{ fontSize: 13, color: '#2C2C2A', fontWeight: 500 }}>
+        <span style={{ fontSize: 13, color: '#2A2722', fontWeight: 500 }}>
           Model Alignment:{' '}
           <span style={{ color: r2Color }}>
             R² {r2Score != null ? r2Score : '—'}
           </span>
         </span>
-        <span style={{ fontSize: 11, color: '#9B9A96' }}>
+        <span style={{ fontSize: 11, color: '#948E87' }}>
           (Rules 70% + ML 30%)
         </span>
       </div>
@@ -134,14 +134,14 @@ export default function RiskDistributionCard({
               alignItems: 'center',
               gap: 4,
               padding: '3px 10px',
-              background: '#F1EFE8',
-              border: '0.5px solid #D3D1C7',
+              background: '#F5F2EC',
+              border: '0.5px solid #D6D1C8',
               borderRadius: 20,
               fontSize: 11,
-              color: '#5F5E5A',
+              color: '#5C5750',
             }}
           >
-            <span style={{ fontWeight: 500, color: '#2C2C2A' }}>{s.label}:</span>
+            <span style={{ fontWeight: 500, color: '#2A2722' }}>{s.label}:</span>
             {s.value}
           </span>
         ))}
