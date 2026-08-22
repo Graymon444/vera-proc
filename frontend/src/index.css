@@ -2,75 +2,251 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ─── VERA Design Tokens ──────────────────────────────────────────────────── */
+:root {
+  --teal-50:  #E1F5EE;
+  --teal-500: #1D9E75;
+  --teal-900: #0F6E56;
+
+  --red-50:   #FAECE7;
+  --red-500:  #D85A30;
+  --red-900:  #712B13;
+
+  --amber-50:  #FAEEDA;
+  --amber-500: #BA7517;
+  --amber-900: #633806;
+
+  --green-50:  #EAF3DE;
+  --green-500: #639922;
+  --green-900: #27500A;
+
+  --surface-0: #F1EFE8;
+  --surface-1: #FFFFFF;
+
+  --ink-primary:   #2C2C2A;
+  --ink-secondary: #5F5E5A;
+  --ink-muted:     #9B9A96;
+  --ink-border:    #D3D1C7;
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.08);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.12);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.15);
+
+  --duration-fast: 150ms;
+  --duration-base: 200ms;
+  --duration-slow: 300ms;
+  --easing: cubic-bezier(0.2, 0, 0.8, 1);
+}
+
+/* ─── Base ────────────────────────────────────────────────────────────────── */
 @layer base {
+  *, *::before, *::after { box-sizing: border-box; }
+
+  html { font-size: 14px; }
+
   body {
-    @apply bg-vera-bg text-vera-text font-sans antialiased;
-    font-size: 15px;
+    background-color: var(--surface-0);
+    color: var(--ink-primary);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-weight: 400;
     line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
-  * {
-    box-sizing: border-box;
+  h1 { font-size: 24px; font-weight: 500; line-height: 1.4; }
+  h2 { font-size: 18px; font-weight: 500; line-height: 1.4; }
+  h3 { font-size: 16px; font-weight: 500; line-height: 1.4; }
+
+  /* Respect reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
   }
 }
 
+/* ─── Components ──────────────────────────────────────────────────────────── */
 @layer components {
-  .vera-card {
-    @apply bg-vera-card rounded-card shadow-card border border-vera-border;
+
+  /* Card */
+  .v-card {
+    background: var(--surface-1);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    border: 0.5px solid var(--ink-border);
+    transition: box-shadow var(--duration-base) var(--easing);
+  }
+  .v-card:hover { box-shadow: var(--shadow-md); }
+
+  /* Buttons */
+  .v-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 48px;
+    padding: 0 24px;
+    border-radius: var(--radius-md);
+    font-size: 14px;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    transition:
+      background var(--duration-fast) var(--easing),
+      transform var(--duration-fast) var(--easing);
+    outline: none;
+  }
+  .v-btn:active { transform: scale(0.98); }
+  .v-btn:focus-visible {
+    outline: 2px solid var(--teal-500);
+    outline-offset: 4px;
+  }
+  .v-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+  .v-btn-primary {
+    background: var(--teal-500);
+    color: #fff;
+  }
+  .v-btn-primary:hover:not(:disabled) { background: #179165; }
+
+  .v-btn-secondary {
+    background: #ECEAE3;
+    color: var(--ink-primary);
+  }
+  .v-btn-secondary:hover:not(:disabled) { background: #E0DED7; }
+
+  .v-btn-danger {
+    background: var(--red-500);
+    color: #fff;
+  }
+  .v-btn-danger:hover:not(:disabled) { background: #C24F28; }
+
+  .v-btn-ghost {
+    background: transparent;
+    color: var(--teal-500);
+    min-height: 36px;
+    padding: 0 12px;
+  }
+  .v-btn-ghost:hover:not(:disabled) { background: var(--teal-50); }
+
+  /* Input */
+  .v-input {
+    width: 100%;
+    height: 48px;
+    padding: 0 14px;
+    border: 1px solid var(--ink-border);
+    border-radius: var(--radius-md);
+    font-size: 14px;
+    color: var(--ink-primary);
+    background: var(--surface-1);
+    outline: none;
+    transition: border-color var(--duration-fast);
+  }
+  .v-input::placeholder { color: var(--ink-muted); }
+  .v-input:focus { border-color: var(--teal-500); }
+
+  .v-textarea {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid var(--ink-border);
+    border-radius: var(--radius-md);
+    font-size: 14px;
+    color: var(--ink-primary);
+    background: var(--surface-1);
+    outline: none;
+    resize: none;
+    transition: border-color var(--duration-fast);
+    line-height: 1.6;
+  }
+  .v-textarea:focus { border-color: var(--teal-500); }
+
+  .v-select {
+    width: 100%;
+    height: 48px;
+    padding: 0 14px;
+    border: 1px solid var(--ink-border);
+    border-radius: var(--radius-md);
+    font-size: 14px;
+    color: var(--ink-primary);
+    background: var(--surface-1);
+    outline: none;
+    appearance: none;
+    cursor: pointer;
+  }
+  .v-select:focus { border-color: var(--teal-500); }
+
+  .v-label {
+    display: block;
+    font-size: 12px;
+    color: var(--ink-secondary);
+    margin-bottom: 6px;
   }
 
-  .vera-btn-primary {
-    @apply bg-vera-primary text-white font-semibold px-5 py-2.5 rounded-btn
-           hover:bg-vera-primary-hover active:scale-95 transition-all duration-150
-           focus:outline-none focus:ring-2 focus:ring-vera-primary focus:ring-offset-2;
+  /* Data row (two-column table) */
+  .v-data-row {
+    display: flex;
+    padding: 10px 0;
+    border-bottom: 0.5px solid var(--ink-border);
+    gap: 12px;
+  }
+  .v-data-row:last-child { border-bottom: none; }
+  .v-data-row-label {
+    width: 35%;
+    font-size: 12px;
+    color: var(--ink-secondary);
+    flex-shrink: 0;
+  }
+  .v-data-row-value {
+    flex: 1;
+    font-size: 14px;
+    color: var(--ink-primary);
   }
 
-  .vera-btn-secondary {
-    @apply bg-white text-vera-text font-medium px-5 py-2.5 rounded-btn border border-vera-border
-           hover:bg-vera-bg active:scale-95 transition-all duration-150
-           focus:outline-none focus:ring-2 focus:ring-vera-primary focus:ring-offset-2;
+  /* Skeleton loading */
+  .v-skeleton {
+    background: linear-gradient(90deg, #E8E6DF 25%, #F0EEE8 50%, #E8E6DF 75%);
+    background-size: 200% 100%;
+    animation: skeleton-pulse 2s infinite;
+    border-radius: var(--radius-md);
+  }
+  @keyframes skeleton-pulse {
+    0%   { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
   }
 
-  .vera-btn-ghost {
-    @apply text-vera-primary font-medium px-4 py-2 rounded-btn
-           hover:bg-vera-primary-light active:scale-95 transition-all duration-150
-           focus:outline-none focus:ring-2 focus:ring-vera-primary focus:ring-offset-2;
+  /* Collapsible section */
+  .v-collapsible-content {
+    overflow: hidden;
+    transition: max-height var(--duration-base) var(--easing),
+                opacity var(--duration-base) var(--easing);
+  }
+  .v-collapsible-content[data-open="false"] {
+    max-height: 0;
+    opacity: 0;
+  }
+  .v-collapsible-content[data-open="true"] {
+    max-height: 2000px;
+    opacity: 1;
   }
 
-  .vera-input {
-    @apply w-full px-4 py-3 rounded-btn border border-vera-border bg-white
-           text-vera-text placeholder-vera-text-muted
-           focus:outline-none focus:ring-2 focus:ring-vera-primary focus:border-vera-primary
-           transition-all duration-150;
+  /* Nav */
+  .v-nav-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: var(--radius-md);
+    font-size: 14px;
+    color: var(--ink-secondary);
+    text-decoration: none;
+    transition: background var(--duration-fast), color var(--duration-fast);
   }
-
-  .vera-label {
-    @apply block text-sm font-semibold text-vera-text mb-1.5;
-  }
-
-  .vera-section-title {
-    @apply text-2xl font-bold text-vera-text tracking-tight;
-  }
-
-  .vera-subsection-title {
-    @apply text-lg font-semibold text-vera-text;
-  }
-
-  .risk-badge-high {
-    @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-badge
-           bg-vera-risk-high-bg text-vera-risk-high border border-vera-risk-high-border
-           text-xs font-bold uppercase tracking-wide;
-  }
-
-  .risk-badge-medium {
-    @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-badge
-           bg-vera-risk-medium-bg text-vera-risk-medium border border-vera-risk-medium-border
-           text-xs font-bold uppercase tracking-wide;
-  }
-
-  .risk-badge-low {
-    @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-badge
-           bg-vera-risk-low-bg text-vera-risk-low border border-vera-risk-low-border
-           text-xs font-bold uppercase tracking-wide;
-  }
+  .v-nav-link:hover { background: var(--teal-50); color: var(--teal-500); }
+  .v-nav-link.active { background: var(--teal-50); color: var(--teal-500); font-weight: 500; }
 }

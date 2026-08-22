@@ -1,87 +1,80 @@
 import React from 'react'
-import RiskBadge from './RiskBadge'
 
-function ScoreArc({ score }) {
-  const pct = Math.min(score, 100)
-  const radius = 52
-  const circ = 2 * Math.PI * radius
-  const offset = circ - (pct / 100) * circ
-
-  const color =
-    pct >= 70 ? '#DC2626' : pct >= 40 ? '#D97706' : '#16A34A'
-
-  return (
-    <div className="flex flex-col items-center gap-2">
-      <svg width="130" height="80" viewBox="0 0 130 80" aria-hidden="true">
-        {/* Background arc */}
-        <path
-          d="M 15 75 A 52 52 0 0 1 115 75"
-          fill="none"
-          stroke="#E8ECF4"
-          strokeWidth="10"
-          strokeLinecap="round"
-        />
-        {/* Score arc */}
-        <path
-          d="M 15 75 A 52 52 0 0 1 115 75"
-          fill="none"
-          stroke={color}
-          strokeWidth="10"
-          strokeLinecap="round"
-          strokeDasharray={`${(pct / 100) * 163.4} 163.4`}
-          style={{ transition: 'stroke-dasharray 0.6s ease' }}
-        />
-      </svg>
-      <div className="text-center -mt-6">
-        <div className="text-4xl font-bold text-vera-text leading-none">
-          {Math.round(pct)}
-        </div>
-        <div className="text-xs text-vera-text-muted mt-0.5">out of 100</div>
-      </div>
-    </div>
-  )
+const LEVEL_CONFIG = {
+  High:   { color: '#D85A30', bg: '#FAECE7', label: 'HIGH RISK',   message: 'Requires Verification' },
+  Medium: { color: '#BA7517', bg: '#FAEEDA', label: 'MEDIUM RISK', message: 'Review Recommended' },
+  Low:    { color: '#639922', bg: '#EAF3DE', label: 'LOW RISK',    message: 'Standard Review' },
 }
 
 export default function RiskScoreCard({ analysis }) {
   if (!analysis) return null
+  const c = LEVEL_CONFIG[analysis.risk_level] || LEVEL_CONFIG.Low
+  const score = Math.round(analysis.risk_score)
+
   return (
-    <div className="vera-card p-6">
-      {/* AI Assessment disclaimer */}
-      <div className="flex items-center gap-2 mb-4">
-        <span className="text-xs font-semibold text-vera-primary bg-vera-primary-light px-2.5 py-1 rounded-full">
-          AI Assessment
+    <div
+      className="v-card"
+      style={{ background: c.bg, border: `0.5px solid ${c.color}40` }}
+    >
+      {/* AI Assessment label */}
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        padding: '14px 16px 0',
+      }}>
+        <span style={{
+          fontSize: 11,
+          fontWeight: 500,
+          color: '#1D9E75',
+          background: '#E1F5EE',
+          border: '0.5px solid #A8DCC7',
+          borderRadius: 4,
+          padding: '2px 8px',
+          letterSpacing: '0.04em',
+        }}>
+          AI ASSESSMENT
         </span>
-        <span className="text-xs text-vera-text-muted">Not a final determination</span>
+        <span style={{ fontSize: 11, color: '#9B9A96' }}>Not a final determination</span>
       </div>
 
-      <ScoreArc score={analysis.risk_score} />
-
-      <div className="text-center mt-4">
-        <RiskBadge level={analysis.risk_level} size="lg" />
-        <p className="text-sm text-vera-text-secondary mt-2">
-          {analysis.risk_level === 'High'
-            ? 'Human Verification Required'
-            : analysis.risk_level === 'Medium'
-            ? 'Additional Verification Recommended'
-            : 'Standard Review Recommended'}
-        </p>
-      </div>
-
-      <div className="mt-5 pt-4 border-t border-vera-border grid grid-cols-2 gap-3 text-sm">
-        <div className="bg-vera-bg rounded-xl p-3 text-center">
-          <div className="text-xs text-vera-text-muted mb-0.5">Rule-Based Score</div>
-          <div className="font-bold text-vera-text">{analysis.rule_score ?? '—'}</div>
+      {/* Score */}
+      <div style={{ textAlign: 'center', padding: '20px 16px 8px' }}>
+        <div style={{ fontSize: 64, fontWeight: 500, color: c.color, lineHeight: 1 }}>
+          {score}
         </div>
-        <div className="bg-vera-bg rounded-xl p-3 text-center">
-          <div className="text-xs text-vera-text-muted mb-0.5">Anomaly Flags</div>
-          <div className="font-bold text-vera-text">
+        <div style={{ fontSize: 12, color: '#9B9A96', marginTop: 4 }}>out of 100</div>
+        <div style={{ fontSize: 18, fontWeight: 500, color: c.color, marginTop: 8, letterSpacing: '0.08em' }}>
+          {c.label}
+        </div>
+        <div style={{ fontSize: 13, color: '#5F5E5A', marginTop: 6 }}>
+          {c.message}
+        </div>
+      </div>
+
+      {/* Sub-scores */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: '1fr 1fr',
+        gap: 8,
+        padding: '12px 16px 16px',
+        borderTop: '0.5px solid #D3D1C720',
+        marginTop: 4,
+      }}>
+        <div style={{ background: 'rgba(255,255,255,0.6)', borderRadius: 8, padding: '10px 12px', textAlign: 'center' }}>
+          <div style={{ fontSize: 11, color: '#5F5E5A', marginBottom: 2 }}>Rule-Based</div>
+          <div style={{ fontSize: 18, fontWeight: 500, color: '#2C2C2A' }}>{analysis.rule_score ?? '—'}</div>
+        </div>
+        <div style={{ background: 'rgba(255,255,255,0.6)', borderRadius: 8, padding: '10px 12px', textAlign: 'center' }}>
+          <div style={{ fontSize: 11, color: '#5F5E5A', marginBottom: 2 }}>Indicators</div>
+          <div style={{ fontSize: 18, fontWeight: 500, color: '#2C2C2A' }}>
             {(analysis.rule_flags || []).length}
           </div>
         </div>
       </div>
 
-      <p className="text-xs text-vera-text-muted text-center mt-4 leading-relaxed">
-        ⚠ Risk thresholds are prototype assumptions. Not official government standards.
+      <p style={{ fontSize: 11, color: '#9B9A96', textAlign: 'center', padding: '0 16px 14px', lineHeight: 1.5 }}>
+        ⚠ Thresholds are prototype assumptions, not official standards
       </p>
     </div>
   )

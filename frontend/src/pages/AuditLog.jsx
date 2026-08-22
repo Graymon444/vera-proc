@@ -2,16 +2,15 @@ import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { getAuditLog } from '../api/client'
 
-const EVENT_LABELS = {
-  submitted: { icon: '📥', label: 'Submitted', color: 'text-blue-600 bg-blue-50 border-blue-200' },
-  analyzed: { icon: '🤖', label: 'AI Analyzed', color: 'text-purple-600 bg-purple-50 border-purple-200' },
-  reviewed: { icon: '👤', label: 'Reviewed', color: 'text-green-600 bg-green-50 border-green-200' },
+const EV = {
+  submitted: { label: '📥 Submitted',   color: '#0F6E56', bg: '#E1F5EE', border: '#A8DCC7' },
+  analyzed:  { label: '🤖 AI Analyzed', color: '#5B5BD6', bg: '#EDEDF9', border: '#BCBCE0' },
+  reviewed:  { label: '👤 Reviewed',    color: '#0F6E56', bg: '#E1F5EE', border: '#A8DCC7' },
 }
 
-function formatDate(iso) {
+function fmt(iso) {
   return new Date(iso).toLocaleString(undefined, {
-    year: 'numeric', month: 'short', day: 'numeric',
-    hour: '2-digit', minute: '2-digit',
+    year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit',
   })
 }
 
@@ -20,78 +19,89 @@ export default function AuditLog() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    getAuditLog({ limit: 200 })
-      .then(r => setLogs(r.data))
-      .finally(() => setLoading(false))
+    getAuditLog({ limit: 200 }).then(r => setLogs(r.data)).finally(() => setLoading(false))
   }, [])
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8">
-      <div className="mb-6">
-        <h1 className="vera-section-title">Audit Log</h1>
-        <p className="text-vera-text-secondary mt-1">
+    <div style={{ maxWidth: 1100, margin: '0 auto', padding: '32px 24px' }}>
+      <div style={{ marginBottom: 20 }}>
+        <h1 style={{ margin: 0 }}>Audit Log</h1>
+        <p style={{ margin: '4px 0 0', fontSize: 14, color: '#5F5E5A' }}>
           Immutable record of all system and reviewer actions
         </p>
       </div>
 
-      <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 mb-6 text-xs text-amber-800">
-        ⚠ Events with [Demo] tag are from synthetic data and do not represent real procurement activity.
+      <div style={{
+        padding: '10px 14px', background: '#FAEEDA',
+        border: '0.5px solid #E0C27A', borderRadius: 8,
+        fontSize: 12, color: '#633806', marginBottom: 20,
+      }}>
+        ⚠ Events tagged [Demo] originate from synthetic data and do not represent real procurement activity.
       </div>
 
       {loading ? (
-        <div className="text-center py-16 text-vera-text-muted">Loading...</div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          {[1,2,3,4,5].map(i => <div key={i} className="v-skeleton" style={{ height: 56 }} />)}
+        </div>
       ) : logs.length === 0 ? (
-        <div className="vera-card p-12 text-center text-vera-text-muted">
-          <p className="text-3xl mb-3">◷</p>
-          <p className="font-medium">No audit events yet</p>
+        <div className="v-card" style={{ padding: '64px 24px', textAlign: 'center', color: '#9B9A96' }}>
+          <div style={{ fontSize: 32, marginBottom: 8 }}>◷</div>
+          <p style={{ fontSize: 14, margin: 0 }}>No audit events yet</p>
         </div>
       ) : (
-        <div className="vera-card overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+        <div className="v-card" style={{ overflow: 'hidden' }}>
+          <div style={{ overflowX: 'auto' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
               <thead>
-                <tr className="bg-vera-bg border-b border-vera-border">
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-vera-text-secondary uppercase tracking-wide">Time</th>
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-vera-text-secondary uppercase tracking-wide">Event</th>
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-vera-text-secondary uppercase tracking-wide hidden sm:table-cell">Submission</th>
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-vera-text-secondary uppercase tracking-wide hidden md:table-cell">Actor</th>
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-vera-text-secondary uppercase tracking-wide">Details</th>
+                <tr style={{ background: '#F1EFE8', borderBottom: '0.5px solid #D3D1C7' }}>
+                  {['Time', 'Event', 'Submission', 'Actor', 'Details'].map(h => (
+                    <th key={h} style={{
+                      padding: '10px 16px', textAlign: 'left', fontSize: 11,
+                      fontWeight: 500, color: '#9B9A96', textTransform: 'uppercase',
+                      letterSpacing: '0.04em',
+                    }}>{h}</th>
+                  ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-vera-border">
-                {logs.map((log) => {
-                  const cfg = EVENT_LABELS[log.event_type] || { icon: '◷', label: log.event_type, color: 'text-gray-600 bg-gray-50 border-gray-200' }
+              <tbody>
+                {logs.map(log => {
+                  const cfg = EV[log.event_type] || { label: `◷ ${log.event_type}`, color: '#9B9A96', bg: '#F1EFE8', border: '#D3D1C7' }
                   return (
-                    <tr key={log.id} className="hover:bg-vera-bg transition-colors duration-100">
-                      <td className="px-4 py-3 text-xs text-vera-text-muted whitespace-nowrap">
-                        {formatDate(log.timestamp)}
+                    <tr
+                      key={log.id}
+                      style={{ borderBottom: '0.5px solid #D3D1C7', transition: 'background 150ms' }}
+                      onMouseEnter={e => e.currentTarget.style.background = '#F8F7F3'}
+                      onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                    >
+                      <td style={{ padding: '11px 16px', fontSize: 11, color: '#9B9A96', whiteSpace: 'nowrap' }}>
+                        {fmt(log.timestamp)}
                       </td>
-                      <td className="px-4 py-3">
-                        <span className={`text-xs font-semibold px-2.5 py-1 rounded-full border ${cfg.color}`}>
-                          {cfg.icon} {cfg.label}
-                        </span>
+                      <td style={{ padding: '11px 16px' }}>
+                        <span style={{
+                          fontSize: 11, padding: '3px 8px', borderRadius: 4,
+                          background: cfg.bg, color: cfg.color, border: `0.5px solid ${cfg.border}`,
+                          whiteSpace: 'nowrap',
+                        }}>{cfg.label}</span>
                       </td>
-                      <td className="px-4 py-3 hidden sm:table-cell">
+                      <td style={{ padding: '11px 16px' }}>
                         {log.submission_id ? (
-                          <Link
-                            to={`/review/${log.submission_id}`}
-                            className="text-vera-primary hover:underline text-xs"
-                          >
+                          <Link to={`/review/${log.submission_id}`}
+                            style={{ fontSize: 12, color: '#1D9E75', textDecoration: 'none', fontWeight: 500 }}>
                             #{log.submission_id}
                           </Link>
                         ) : '—'}
                       </td>
-                      <td className="px-4 py-3 text-xs text-vera-text-secondary hidden md:table-cell">
+                      <td style={{ padding: '11px 16px', fontSize: 12, color: '#5F5E5A' }}>
                         {log.actor || '—'}
                       </td>
-                      <td className="px-4 py-3">
-                        <div className="text-xs text-vera-text-secondary">
+                      <td style={{ padding: '11px 16px' }}>
+                        <div style={{ fontSize: 12, color: '#5F5E5A', display: 'flex', gap: 12, flexWrap: 'wrap' }}>
                           {Object.entries(log.event_data || {})
                             .filter(([k]) => k !== 'source')
                             .map(([k, v]) => (
-                              <span key={k} className="mr-3 whitespace-nowrap">
-                                <span className="text-vera-text-muted capitalize">{k.replace(/_/g, ' ')}: </span>
-                                <span className="font-medium">{String(v)}</span>
+                              <span key={k}>
+                                <span style={{ color: '#9B9A96', textTransform: 'capitalize' }}>{k.replace(/_/g,' ')}: </span>
+                                <span style={{ color: '#2C2C2A', fontWeight: 500 }}>{String(v)}</span>
                               </span>
                             ))}
                         </div>

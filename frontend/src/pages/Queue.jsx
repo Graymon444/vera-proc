@@ -1,23 +1,23 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { listSubmissions } from '../api/client'
-import RiskBadge from '../components/RiskBadge'
+import { RiskPill } from '../components/RiskBadge'
 
 const FILTERS = ['All', 'High', 'Medium', 'Low']
 
-function formatCurrency(n) {
-  return new Intl.NumberFormat('en-MY', { style: 'currency', currency: 'MYR', maximumFractionDigits: 0 }).format(n)
+function fmtRp(n) {
+  if (n == null) return '—'
+  return 'Rp ' + Math.round(n).toLocaleString('id-ID')
 }
-
-function formatDate(iso) {
+function fmtDate(iso) {
   if (!iso) return ''
-  return new Date(iso).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })
+  return new Date(iso).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })
 }
 
 const DECISION_STYLE = {
-  'Verified': 'text-green-700 bg-green-50 border-green-200',
-  'Needs Further Review': 'text-amber-700 bg-amber-50 border-amber-200',
-  'Dismissed': 'text-gray-600 bg-gray-50 border-gray-200',
+  'Verified':            { bg: '#E1F5EE', color: '#0F6E56', border: '#A8DCC7' },
+  'Needs Further Review':{ bg: '#FAEEDA', color: '#633806', border: '#E0C27A' },
+  'Dismissed':           { bg: '#F1EFE8', color: '#5F5E5A', border: '#D3D1C7' },
 }
 
 export default function Queue() {
@@ -25,123 +25,119 @@ export default function Queue() {
   const [filter, setFilter] = useState('All')
   const [loading, setLoading] = useState(true)
 
-  async function load(riskLevel) {
+  useEffect(() => {
     setLoading(true)
-    try {
-      const params = riskLevel !== 'All' ? { risk_level: riskLevel } : {}
-      const res = await listSubmissions(params)
-      setItems(res.data)
-    } catch {
-      // empty
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  useEffect(() => { load(filter) }, [filter])
+    listSubmissions(filter !== 'All' ? { risk_level: filter } : {})
+      .then(r => setItems(r.data))
+      .finally(() => setLoading(false))
+  }, [filter])
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+    <div style={{ maxWidth: 1200, margin: '0 auto', padding: '32px 24px' }}>
+
+      {/* Header */}
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 24, flexWrap: 'wrap', gap: 12 }}>
         <div>
-          <h1 className="vera-section-title">Review Queue</h1>
-          <p className="text-vera-text-secondary mt-1">
-            Prioritized by risk score — highest risk first
+          <h1 style={{ margin: 0 }}>Review Queue</h1>
+          <p style={{ margin: '4px 0 0', fontSize: 14, color: '#5F5E5A' }}>
+            Sorted by risk score — highest priority first
           </p>
         </div>
-        <Link to="/submit" className="vera-btn-primary text-sm shrink-0">
+        <Link to="/submit" className="v-btn v-btn-primary" style={{ minHeight: 40, padding: '0 16px', fontSize: 13, textDecoration: 'none' }}>
           + New Submission
         </Link>
       </div>
 
       {/* Filter tabs */}
-      <div className="flex gap-2 mb-6 flex-wrap">
+      <div style={{ display: 'flex', gap: 6, marginBottom: 20, flexWrap: 'wrap' }}>
         {FILTERS.map(f => (
           <button
             key={f}
             onClick={() => setFilter(f)}
-            className={`px-4 py-2 rounded-btn text-sm font-medium border transition-all duration-150 ${
-              filter === f
-                ? 'bg-vera-primary text-white border-vera-primary shadow-sm'
-                : 'bg-white text-vera-text-secondary border-vera-border hover:bg-vera-bg'
-            }`}
-          >
-            {f}
-          </button>
+            style={{
+              padding: '6px 16px', borderRadius: 8, fontSize: 13, border: '0.5px solid',
+              cursor: 'pointer', transition: 'all 150ms', minHeight: 36,
+              background: filter === f ? '#1D9E75' : '#fff',
+              color: filter === f ? '#fff' : '#5F5E5A',
+              borderColor: filter === f ? '#1D9E75' : '#D3D1C7',
+              fontWeight: filter === f ? 500 : 400,
+            }}
+          >{f}</button>
         ))}
       </div>
 
       {loading ? (
-        <div className="flex items-center justify-center h-48 text-vera-text-muted">Loading...</div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          {[1,2,3,4,5].map(i => <div key={i} className="v-skeleton" style={{ height: 72 }} />)}
+        </div>
       ) : items.length === 0 ? (
-        <div className="vera-card p-12 text-center text-vera-text-muted">
-          <p className="text-4xl mb-3">📋</p>
-          <p className="font-medium">No submissions found</p>
-          <p className="text-sm mt-1">
+        <div className="v-card" style={{ padding: '64px 24px', textAlign: 'center', color: '#9B9A96' }}>
+          <div style={{ fontSize: 36, marginBottom: 8 }}>📋</div>
+          <p style={{ fontSize: 14, margin: 0 }}>No submissions found</p>
+          <p style={{ fontSize: 12, margin: '4px 0 0' }}>
             {filter !== 'All' ? `No ${filter} risk submissions yet.` : 'Load demo data or submit a new procurement.'}
           </p>
         </div>
       ) : (
-        <div className="vera-card overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+        <div className="v-card" style={{ overflow: 'hidden' }}>
+          <div style={{ overflowX: 'auto' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 14 }}>
               <thead>
-                <tr className="border-b border-vera-border bg-vera-bg">
-                  <th className="text-left px-4 py-3 font-semibold text-vera-text-secondary text-xs uppercase tracking-wide">#</th>
-                  <th className="text-left px-4 py-3 font-semibold text-vera-text-secondary text-xs uppercase tracking-wide">Submission</th>
-                  <th className="text-left px-4 py-3 font-semibold text-vera-text-secondary text-xs uppercase tracking-wide hidden sm:table-cell">Category</th>
-                  <th className="text-left px-4 py-3 font-semibold text-vera-text-secondary text-xs uppercase tracking-wide hidden md:table-cell">Amount</th>
-                  <th className="text-left px-4 py-3 font-semibold text-vera-text-secondary text-xs uppercase tracking-wide">AI Assessment</th>
-                  <th className="text-left px-4 py-3 font-semibold text-vera-text-secondary text-xs uppercase tracking-wide hidden lg:table-cell">Status</th>
-                  <th className="text-right px-4 py-3 font-semibold text-vera-text-secondary text-xs uppercase tracking-wide"></th>
+                <tr style={{ background: '#F1EFE8', borderBottom: '0.5px solid #D3D1C7' }}>
+                  {['#', 'Submission', 'Category', 'Amount', 'AI Assessment', 'Status', ''].map(h => (
+                    <th key={h} style={{
+                      padding: '10px 16px', textAlign: 'left', fontSize: 11,
+                      fontWeight: 500, color: '#9B9A96', textTransform: 'uppercase',
+                      letterSpacing: '0.04em', whiteSpace: 'nowrap',
+                    }}>{h}</th>
+                  ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-vera-border">
-                {items.map(({ submission, analysis, review }) => (
+              <tbody>
+                {items.map(({ submission: s, analysis: a, review: r }, idx) => (
                   <tr
-                    key={submission.id}
-                    className="hover:bg-vera-bg transition-colors duration-100"
+                    key={s.id}
+                    style={{ borderBottom: '0.5px solid #D3D1C7', transition: 'background 150ms' }}
+                    onMouseEnter={e => e.currentTarget.style.background = '#F8F7F3'}
+                    onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
                   >
-                    <td className="px-4 py-3 text-vera-text-muted">{submission.id}</td>
-                    <td className="px-4 py-3">
-                      <div className="font-medium text-vera-text leading-snug">
-                        {submission.title}
-                        {submission.is_synthetic && (
-                          <span className="ml-1.5 text-xs text-vera-text-muted font-normal">[Demo]</span>
+                    <td style={{ padding: '12px 16px', color: '#9B9A96', fontSize: 12 }}>{s.id}</td>
+                    <td style={{ padding: '12px 16px', maxWidth: 260 }}>
+                      <div style={{ fontSize: 13, fontWeight: 500, color: '#2C2C2A', display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+                        {s.title.replace(/^\[SYNTHETIC[^\]]*\]\s*/, '').replace(/^\[.*?\]\s*/, '').substring(0, 48)}
+                        {s.is_synthetic && (
+                          <span style={{ fontSize: 10, color: '#9B9A96', background: '#F1EFE8', border: '0.5px solid #D3D1C7', borderRadius: 3, padding: '1px 5px' }}>Demo</span>
                         )}
                       </div>
-                      <div className="text-xs text-vera-text-muted mt-0.5">
-                        {submission.vendor_name} · {formatDate(submission.submitted_at)}
+                      <div style={{ fontSize: 11, color: '#9B9A96', marginTop: 2 }}>
+                        {s.vendor_name} · {fmtDate(s.submitted_at)}
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-vera-text-secondary hidden sm:table-cell">
-                      {submission.category}
+                    <td style={{ padding: '12px 16px', fontSize: 12, color: '#5F5E5A', whiteSpace: 'nowrap' }}>{s.category}</td>
+                    <td style={{ padding: '12px 16px', fontSize: 13, fontWeight: 500, color: '#2C2C2A', whiteSpace: 'nowrap' }}>{fmtRp(s.requested_amount)}</td>
+                    <td style={{ padding: '12px 16px' }}>
+                      {a ? <RiskPill level={a.risk_level} /> : <span style={{ fontSize: 11, color: '#9B9A96' }}>—</span>}
+                      {a && <div style={{ fontSize: 11, color: '#9B9A96', marginTop: 2 }}>{Math.round(a.risk_score)} / 100</div>}
                     </td>
-                    <td className="px-4 py-3 text-vera-text font-medium hidden md:table-cell">
-                      {formatCurrency(submission.requested_amount)}
-                    </td>
-                    <td className="px-4 py-3">
-                      {analysis ? (
-                        <RiskBadge level={analysis.risk_level} score={analysis.risk_score} showScore />
+                    <td style={{ padding: '12px 16px' }}>
+                      {r ? (
+                        <span style={{
+                          fontSize: 11, padding: '3px 8px', borderRadius: 4,
+                          background: DECISION_STYLE[r.decision]?.bg || '#F1EFE8',
+                          color: DECISION_STYLE[r.decision]?.color || '#5F5E5A',
+                          border: `0.5px solid ${DECISION_STYLE[r.decision]?.border || '#D3D1C7'}`,
+                        }}>{r.decision}</span>
                       ) : (
-                        <span className="text-vera-text-muted text-xs">Pending</span>
-                      )}
-                    </td>
-                    <td className="px-4 py-3 hidden lg:table-cell">
-                      {review ? (
-                        <span className={`text-xs font-medium px-2.5 py-1 rounded-full border ${DECISION_STYLE[review.decision] || ''}`}>
-                          {review.decision}
-                        </span>
-                      ) : (
-                        <span className="text-xs text-amber-600 bg-amber-50 border border-amber-200 px-2.5 py-1 rounded-full">
-                          Pending Review
+                        <span style={{ fontSize: 11, padding: '3px 8px', borderRadius: 4, background: '#FAEEDA', color: '#633806', border: '0.5px solid #E0C27A' }}>
+                          Pending
                         </span>
                       )}
                     </td>
-                    <td className="px-4 py-3 text-right">
+                    <td style={{ padding: '12px 16px', textAlign: 'right' }}>
                       <Link
-                        to={`/review/${submission.id}`}
-                        className="vera-btn-ghost text-xs px-3 py-1.5"
+                        to={`/review/${s.id}`}
+                        className="v-btn-ghost"
+                        style={{ fontSize: 12, minHeight: 32, padding: '0 10px', textDecoration: 'none' }}
                       >
                         Review →
                       </Link>

@@ -1,311 +1,288 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { getDashboardStats, seedDemoData, seedGovData, getModelEval } from '../api/client'
-import RiskBadge from '../components/RiskBadge'
-import {
-  BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell,
-} from 'recharts'
+import { getDashboardStats, seedGovData, getModelEval } from '../api/client'
+import { RiskPill } from '../components/RiskBadge'
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts'
 
-function StatCard({ title, value, sub, color = 'text-vera-text', icon, bg = 'bg-vera-bg' }) {
+function MetricCard({ value, label, color = '#2C2C2A', bg = '#F1EFE8', border = '#D3D1C7' }) {
   return (
-    <div className="vera-card p-5 flex items-center gap-4">
-      <div className={`w-12 h-12 rounded-xl ${bg} flex items-center justify-center text-2xl shrink-0`}>
-        {icon}
-      </div>
-      <div>
-        <p className="text-xs text-vera-text-muted font-medium uppercase tracking-wide">{title}</p>
-        <p className={`text-3xl font-bold leading-tight ${color}`}>{value}</p>
-        {sub && <p className="text-xs text-vera-text-muted mt-0.5">{sub}</p>}
-      </div>
+    <div style={{
+      background: bg, border: `0.5px solid ${border}`,
+      borderRadius: 12, padding: '16px', textAlign: 'center',
+      boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+    }}>
+      <div style={{ fontSize: 28, fontWeight: 500, color, lineHeight: 1 }}>{value}</div>
+      <div style={{ fontSize: 12, color: '#5F5E5A', marginTop: 6, lineHeight: 1.4 }}>{label}</div>
     </div>
   )
 }
 
-function formatDate(iso) {
-  if (!iso) return ''
+function SubmissionCard({ item }) {
+  const lvlColor = { High: '#D85A30', Medium: '#BA7517', Low: '#639922' }
+  const lvlBg    = { High: '#FAECE7', Medium: '#FAEEDA', Low: '#EAF3DE' }
+  const lvlBorder= { High: '#E8B89F', Medium: '#E0C27A', Low: '#AECB78' }
+  const lv = item.risk_level
+
+  return (
+    <Link
+      to={`/review/${item.submission_id}`}
+      style={{
+        display: 'block', textDecoration: 'none',
+        background: '#fff',
+        border: `0.5px solid ${lvlBorder[lv] || '#D3D1C7'}`,
+        borderLeft: `4px solid ${lvlColor[lv] || '#D3D1C7'}`,
+        borderRadius: 12, padding: '14px 16px',
+        boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+        transition: 'box-shadow 200ms, transform 150ms',
+      }}
+      onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.12)'; e.currentTarget.style.transform = 'scale(1.01)' }}
+      onMouseLeave={e => { e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.06)'; e.currentTarget.style.transform = 'scale(1)' }}
+    >
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+            <span style={{ fontSize: 14, fontWeight: 500, color: '#2C2C2A' }}>
+              {item.title.replace(/^\[SYNTHETIC[^\]]*\]\s*/, '').replace(/^\[.*?\]\s*/, '')}
+            </span>
+            {item.is_synthetic && (
+              <span style={{
+                fontSize: 11, color: '#9B9A96',
+                background: '#F1EFE8', border: '0.5px solid #D3D1C7',
+                borderRadius: 4, padding: '1px 6px',
+              }}>Demo</span>
+            )}
+          </div>
+          <div style={{ fontSize: 12, color: '#9B9A96', marginTop: 4 }}>
+            {item.vendor_name} · {item.category}
+          </div>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+          <div style={{
+            background: lvlBg[lv], border: `0.5px solid ${lvlBorder[lv]}`,
+            borderRadius: 8, padding: '6px 10px', textAlign: 'center', minWidth: 52,
+          }}>
+            <div style={{ fontSize: 18, fontWeight: 500, color: lvlColor[lv], lineHeight: 1 }}>
+              {Math.round(item.risk_score)}
+            </div>
+            <div style={{ fontSize: 10, color: lvlColor[lv], letterSpacing: '0.04em', marginTop: 2 }}>
+              {lv?.toUpperCase()}
+            </div>
+          </div>
+        </div>
+      </div>
+    </Link>
+  )
+}
+
+function fmt(iso) {
   return new Date(iso).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })
 }
 
 export default function Dashboard() {
   const [stats, setStats] = useState(null)
+  const [evalData, setEvalData] = useState(null)
   const [loading, setLoading] = useState(true)
   const [seeding, setSeeding] = useState(false)
   const [seedMsg, setSeedMsg] = useState(null)
-  const [modelEval, setModelEval] = useState(null)
 
   async function load() {
     try {
-      const [statsRes, evalRes] = await Promise.all([
-        getDashboardStats(),
-        getModelEval(),
-      ])
-      setStats(statsRes.data)
-      setModelEval(evalRes.data)
-    } catch (e) {
-      // empty
-    } finally {
-      setLoading(false)
-    }
+      const [s, e] = await Promise.all([getDashboardStats(), getModelEval()])
+      setStats(s.data); setEvalData(e.data)
+    } catch { /* empty */ }
+    finally { setLoading(false) }
   }
 
   useEffect(() => { load() }, [])
 
   async function handleSeed() {
-    setSeeding(true)
-    setSeedMsg(null)
+    setSeeding(true); setSeedMsg(null)
     try {
-      const res = await seedGovData(60)
-      setSeedMsg(`${res.data.message} (Low: ${res.data.risk_distribution?.Low ?? 0}, Medium: ${res.data.risk_distribution?.Medium ?? 0}, High: ${res.data.risk_distribution?.High ?? 0})`)
+      const r = await seedGovData(60)
+      const d = r.data.risk_distribution || {}
+      setSeedMsg(`Loaded ${r.data.count} synthetic records — Low: ${d.Low ?? 0}, Medium: ${d.Medium ?? 0}, High: ${d.High ?? 0}`)
       load()
-    } catch {
-      setSeedMsg('Failed to seed data.')
-    } finally {
-      setSeeding(false)
-    }
+    } catch { setSeedMsg('Failed to load data.') }
+    finally { setSeeding(false) }
   }
 
   const chartData = stats ? [
-    { name: 'High', value: stats.high_risk, fill: '#DC2626' },
-    { name: 'Medium', value: stats.medium_risk, fill: '#D97706' },
-    { name: 'Low', value: stats.low_risk, fill: '#16A34A' },
+    { name: 'High',   value: stats.high_risk,   fill: '#D85A30' },
+    { name: 'Medium', value: stats.medium_risk,  fill: '#BA7517' },
+    { name: 'Low',    value: stats.low_risk,     fill: '#639922' },
   ] : []
 
+  const r2 = evalData?.r2_score
+  const r2Color = r2 == null ? '#9B9A96' : r2 >= 0.8 ? '#639922' : r2 >= 0.6 ? '#BA7517' : '#D85A30'
+
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+    <div style={{ maxWidth: 1200, margin: '0 auto', padding: '32px 24px' }}>
+
+      {/* Page header */}
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16, marginBottom: 24, flexWrap: 'wrap' }}>
         <div>
-          <h1 className="vera-section-title">Dashboard</h1>
-          <p className="text-vera-text-secondary mt-1">
-            Overview of procurement submissions and risk assessments
+          <h1 style={{ margin: 0 }}>Dashboard</h1>
+          <p style={{ margin: '4px 0 0', fontSize: 14, color: '#5F5E5A' }}>
+            AI-assisted procurement risk overview
           </p>
         </div>
-        <div className="flex items-center gap-3">
-          <button
-            onClick={handleSeed}
-            disabled={seeding}
-            className="vera-btn-secondary text-sm disabled:opacity-50"
-          >
-            {seeding ? 'Loading Demo Data...' : '⊕ Load Demo Data'}
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+          <button onClick={handleSeed} disabled={seeding} className="v-btn v-btn-secondary" style={{ minHeight: 40, padding: '0 16px', fontSize: 13 }}>
+            {seeding ? 'Loading...' : '⊕ Load Indonesia Gov Data'}
           </button>
-          <Link to="/submit" className="vera-btn-primary text-sm">
+          <Link to="/submit" className="v-btn v-btn-primary" style={{ minHeight: 40, padding: '0 16px', fontSize: 13, textDecoration: 'none' }}>
             + New Submission
           </Link>
         </div>
       </div>
 
       {seedMsg && (
-        <div className="bg-green-50 border border-green-200 text-green-800 text-sm px-4 py-3 rounded-xl mb-6">
-          ✓ {seedMsg} — All records are synthetic demo data.
+        <div style={{
+          padding: '10px 14px', background: '#E1F5EE',
+          border: '0.5px solid #A8DCC7', borderRadius: 8,
+          fontSize: 12, color: '#0F6E56', marginBottom: 20,
+        }}>
+          ✓ {seedMsg} — All records are synthetic demo data, not real procurement.
         </div>
       )}
 
       {loading ? (
-        <div className="flex items-center justify-center h-64 text-vera-text-muted">
-          Loading...
+        /* Skeleton */
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+          {[1,2,3,4,5,6].map(i => (
+            <div key={i} className="v-skeleton" style={{ height: 80 }} />
+          ))}
         </div>
       ) : (
         <>
-          {/* Stats grid */}
-          <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-8">
-            <StatCard
-              title="Total Submissions"
-              value={stats?.total_submissions ?? 0}
-              icon="📋"
-              bg="bg-blue-50"
-            />
-            <StatCard
-              title="High Risk"
-              value={stats?.high_risk ?? 0}
-              icon="⚠"
-              color="text-red-600"
-              bg="bg-red-50"
-            />
-            <StatCard
-              title="Medium Risk"
-              value={stats?.medium_risk ?? 0}
-              icon="◆"
-              color="text-amber-600"
-              bg="bg-amber-50"
-            />
-            <StatCard
-              title="Low Risk"
-              value={stats?.low_risk ?? 0}
-              icon="✓"
-              color="text-green-600"
-              bg="bg-green-50"
-            />
-            <StatCard
-              title="Pending Review"
-              value={stats?.pending_review ?? 0}
-              icon="⏳"
-              color="text-amber-600"
-              bg="bg-amber-50"
-            />
-            <StatCard
-              title="Reviewed"
-              value={stats?.reviewed ?? 0}
-              icon="👤"
-              color="text-vera-primary"
-              bg="bg-vera-primary-light"
-            />
-          </div>
+          {/* Risk summary + metrics */}
+          <section aria-label="Risk summary" style={{ marginBottom: 24 }}>
+            <h2 style={{ margin: '0 0 12px', fontSize: 14, fontWeight: 500, color: '#5F5E5A', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+              Risk Distribution
+            </h2>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 8, marginBottom: 8 }}
+              className="grid-3col">
+              <MetricCard value={stats?.high_risk ?? 0}   label="High Risk"    color="#D85A30" bg="#FAECE7" border="#E8B89F" />
+              <MetricCard value={stats?.medium_risk ?? 0} label="Medium Risk"  color="#BA7517" bg="#FAEEDA" border="#E0C27A" />
+              <MetricCard value={stats?.low_risk ?? 0}    label="Low Risk"     color="#639922" bg="#EAF3DE" border="#AECB78" />
+              <MetricCard value={stats?.total_submissions ?? 0} label="Total Submissions" />
+              <MetricCard value={stats?.pending_review ?? 0} label="Pending Review" color="#BA7517" bg="#FAEEDA" border="#E0C27A" />
+              <MetricCard value={stats?.reviewed ?? 0} label="Reviewed" color="#1D9E75" bg="#E1F5EE" border="#A8DCC7" />
+            </div>
+          </section>
 
-          <div className="grid lg:grid-cols-3 gap-6">
-            {/* Chart */}
-            <div className="vera-card p-6 lg:col-span-1">
-              <h2 className="vera-subsection-title mb-1">Risk Distribution</h2>
-              <p className="text-xs text-vera-text-muted mb-5">
-                Submissions by risk level
-              </p>
+          {/* Chart + Model Eval */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 24 }} className="grid-1col-mobile">
+
+            {/* Bar chart */}
+            <div className="v-card" style={{ padding: '16px' }}>
+              <h2 style={{ margin: '0 0 4px' }}>Risk Distribution</h2>
+              <p style={{ margin: '0 0 16px', fontSize: 12, color: '#9B9A96' }}>Submissions by risk level</p>
               {chartData.every(d => d.value === 0) ? (
-                <div className="flex flex-col items-center py-8 text-vera-text-muted text-sm">
-                  <p>No data yet.</p>
-                  <p className="text-xs mt-1">Load demo data to see the chart.</p>
+                <div style={{ textAlign: 'center', padding: '32px 0', color: '#9B9A96', fontSize: 13 }}>
+                  Load demo data to see the chart
                 </div>
               ) : (
-                <ResponsiveContainer width="100%" height={180}>
-                  <BarChart data={chartData} barCategoryGap="30%">
-                    <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12 }} />
-                    <YAxis allowDecimals={false} axisLine={false} tickLine={false} tick={{ fontSize: 11 }} />
-                    <Tooltip
-                      contentStyle={{ borderRadius: 10, border: '1px solid #E8ECF4', boxShadow: 'none' }}
-                      cursor={{ fill: '#F4F6FB' }}
-                    />
+                <ResponsiveContainer width="100%" height={160}>
+                  <BarChart data={chartData} barCategoryGap="35%">
+                    <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#5F5E5A' }} />
+                    <YAxis allowDecimals={false} axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#9B9A96' }} />
+                    <Tooltip contentStyle={{ borderRadius: 8, border: '0.5px solid #D3D1C7', fontSize: 12, boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }} cursor={{ fill: '#F1EFE8' }} />
                     <Bar dataKey="value" radius={[6, 6, 0, 0]}>
-                      {chartData.map((entry, index) => (
-                        <Cell key={index} fill={entry.fill} />
-                      ))}
+                      {chartData.map((e, i) => <Cell key={i} fill={e.fill} />)}
                     </Bar>
                   </BarChart>
                 </ResponsiveContainer>
               )}
             </div>
 
-            {/* Recent submissions */}
-            <div className="vera-card p-6 lg:col-span-2">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="vera-subsection-title">Recent Analyses</h2>
-                <Link to="/queue" className="vera-btn-ghost text-sm px-3 py-1.5">
-                  View All →
-                </Link>
+            {/* Model Validation */}
+            <div className="v-card" style={{ padding: '16px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                <span style={{ fontSize: 16 }}>🤖</span>
+                <h2 style={{ margin: 0 }}>Model Validation</h2>
               </div>
+              <p style={{ margin: '0 0 16px', fontSize: 12, color: '#9B9A96' }}>
+                ML ↔ Rule Engine alignment
+              </p>
 
-              {!stats?.recent_analyses?.length ? (
-                <div className="text-sm text-vera-text-muted text-center py-8">
-                  No submissions yet. Load demo data or submit a new one.
+              {evalData?.status === 'ok' ? (
+                <div>
+                  <div style={{ textAlign: 'center', marginBottom: 14 }}>
+                    <div style={{ fontSize: 40, fontWeight: 500, color: r2Color, lineHeight: 1 }}>
+                      {evalData.r2_score}
+                    </div>
+                    <div style={{ fontSize: 12, color: '#5F5E5A', marginTop: 4 }}>R² Score</div>
+                    <div style={{ fontSize: 13, fontWeight: 500, color: r2Color, marginTop: 6 }}>
+                      {evalData.alignment_level} Alignment
+                    </div>
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 12 }}>
+                    {[
+                      { l: 'Samples', v: evalData.sample_count },
+                      { l: 'Rule avg', v: evalData.rule_score_mean },
+                      { l: 'ML avg', v: evalData.ml_score_mean },
+                      { l: 'Rule σ', v: evalData.rule_score_std },
+                    ].map(({ l, v }) => (
+                      <div key={l} style={{ background: '#F1EFE8', borderRadius: 8, padding: '8px', textAlign: 'center' }}>
+                        <div style={{ fontSize: 11, color: '#9B9A96' }}>{l}</div>
+                        <div style={{ fontSize: 15, fontWeight: 500, color: '#2C2C2A' }}>{v}</div>
+                      </div>
+                    ))}
+                  </div>
+                  <p style={{ fontSize: 11, color: '#9B9A96', lineHeight: 1.5, margin: 0 }}>
+                    {evalData.interpretation}
+                  </p>
                 </div>
               ) : (
-                <div className="flex flex-col divide-y divide-vera-border">
-                  {stats.recent_analyses.map((item) => (
-                    <Link
-                      key={item.submission_id}
-                      to={`/review/${item.submission_id}`}
-                      className="flex items-center gap-3 py-3 hover:bg-vera-bg -mx-2 px-2 rounded-xl transition-colors"
-                    >
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <p className="text-sm font-medium text-vera-text truncate">
-                            {item.title}
-                            {item.is_synthetic && (
-                              <span className="ml-1.5 text-xs text-vera-text-muted font-normal">[Demo]</span>
-                            )}
-                          </p>
-                        </div>
-                        <p className="text-xs text-vera-text-muted mt-0.5">
-                          {item.vendor_name} · {item.category} · {formatDate(item.analyzed_at)}
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-3 shrink-0">
-                        <RiskBadge level={item.risk_level} score={item.risk_score} showScore />
-                        {item.is_reviewed && (
-                          <span className="text-xs text-green-600 bg-green-50 border border-green-200 px-2 py-0.5 rounded-full">
-                            Reviewed
-                          </span>
-                        )}
-                      </div>
-                    </Link>
-                  ))}
+                <div style={{ padding: '24px 0', textAlign: 'center', color: '#9B9A96', fontSize: 13 }}>
+                  {evalData?.message || 'Load data to run model evaluation'}
                 </div>
               )}
             </div>
           </div>
 
-          {/* Model Validation Card */}
-          {modelEval && (
-            <div className="vera-card p-6 mt-6">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-9 h-9 bg-purple-100 rounded-xl flex items-center justify-center text-xl">🤖</div>
-                <div>
-                  <h2 className="vera-subsection-title">Model Validation</h2>
-                  <p className="text-xs text-vera-text-muted">ML ↔ Rule Engine alignment (R² score)</p>
-                </div>
-                <span className="ml-auto text-xs font-semibold bg-vera-primary-light text-vera-primary px-3 py-1 rounded-full border border-blue-200">
-                  AI Assessment
-                </span>
-              </div>
-
-              {modelEval.status === 'ok' ? (
-                <div className="grid sm:grid-cols-3 gap-4">
-                  {/* R² Score */}
-                  <div className="bg-vera-bg rounded-xl p-4 text-center border border-vera-border">
-                    <p className="text-xs text-vera-text-muted mb-1">R² Score</p>
-                    <p className={`text-4xl font-bold ${
-                      modelEval.r2_score >= 0.8 ? 'text-green-600' :
-                      modelEval.r2_score >= 0.6 ? 'text-amber-600' : 'text-red-600'
-                    }`}>{modelEval.r2_score}</p>
-                    <p className={`text-xs font-semibold mt-1 ${
-                      modelEval.r2_score >= 0.8 ? 'text-green-600' :
-                      modelEval.r2_score >= 0.6 ? 'text-amber-600' : 'text-red-600'
-                    }`}>{modelEval.alignment_level} Alignment</p>
-                  </div>
-
-                  {/* Stats */}
-                  <div className="bg-vera-bg rounded-xl p-4 border border-vera-border">
-                    <p className="text-xs text-vera-text-muted mb-2">Score Statistics</p>
-                    <div className="text-xs space-y-1.5">
-                      <div className="flex justify-between">
-                        <span className="text-vera-text-muted">Samples evaluated</span>
-                        <span className="font-semibold">{modelEval.sample_count}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-vera-text-muted">Rule score avg</span>
-                        <span className="font-semibold">{modelEval.rule_score_mean}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-vera-text-muted">ML score avg</span>
-                        <span className="font-semibold">{modelEval.ml_score_mean}</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Interpretation */}
-                  <div className="bg-vera-bg rounded-xl p-4 border border-vera-border sm:col-span-1">
-                    <p className="text-xs text-vera-text-muted mb-2">Interpretation</p>
-                    <p className="text-xs text-vera-text leading-relaxed">{modelEval.interpretation}</p>
-                  </div>
-                </div>
-              ) : (
-                <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 text-sm text-amber-800">
-                  {modelEval.message}
-                </div>
-              )}
-
-              <p className="text-xs text-vera-text-muted mt-3 pt-3 border-t border-vera-border leading-relaxed">
-                ⚠ {modelEval.note || 'R² measures internal consistency between ML and rule engine, not ground-truth fraud detection accuracy.'}
-              </p>
+          {/* Submission queue */}
+          <section aria-label="Recent submissions">
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+              <h2 style={{ margin: 0 }}>Recent Analyses</h2>
+              <Link to="/queue" className="v-btn-ghost" style={{ fontSize: 12, minHeight: 32, padding: '0 10px' }}>
+                View all →
+              </Link>
             </div>
-          )}
 
-          {/* Disclaimer */}
-          <div className="mt-6 bg-amber-50 border border-amber-200 rounded-xl p-4 text-xs text-amber-800 leading-relaxed">
-            <strong>⚠ Prototype Disclaimer:</strong> VERA is a research/competition prototype.
-            Risk thresholds, scoring weights, and anomaly indicators are configurable prototype assumptions —
-            not official government procurement standards. All demo data is synthetic and fictional.
-            AI assessments are advisory only. All decisions require human review.
+            {!stats?.recent_analyses?.length ? (
+              <div className="v-card" style={{ padding: '48px 16px', textAlign: 'center', color: '#9B9A96' }}>
+                <div style={{ fontSize: 32, marginBottom: 8 }}>📋</div>
+                <p style={{ margin: 0, fontSize: 14 }}>No submissions yet</p>
+                <p style={{ margin: '4px 0 0', fontSize: 12 }}>Load demo data or submit a new procurement</p>
+              </div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                {stats.recent_analyses.map(item => (
+                  <SubmissionCard key={item.submission_id} item={item} />
+                ))}
+              </div>
+            )}
+          </section>
+
+          {/* Prototype disclaimer */}
+          <div style={{
+            marginTop: 32, padding: '12px 16px',
+            background: '#FAEEDA', border: '0.5px solid #E0C27A',
+            borderRadius: 8, fontSize: 12, color: '#633806', lineHeight: 1.6,
+          }}>
+            <strong>⚠ Prototype Disclaimer:</strong> VERA is a research prototype.
+            Risk thresholds and scoring weights are configurable assumptions — not official government standards.
+            All demo data is synthetic and fictional. AI assessments are advisory only.
           </div>
         </>
       )}
+
+      <style>{`
+        @media (min-width: 640px) { .grid-3col { grid-template-columns: repeat(3,1fr) !important; } }
+        @media (max-width: 640px) { .grid-1col-mobile { grid-template-columns: 1fr !important; } }
+      `}</style>
     </div>
   )
 }

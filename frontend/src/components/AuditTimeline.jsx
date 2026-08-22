@@ -1,13 +1,13 @@
 import React from 'react'
 
-const EVENT_CONFIG = {
-  submitted: { icon: '📥', label: 'Submitted', color: 'text-blue-600', bg: 'bg-blue-100' },
-  analyzed: { icon: '🤖', label: 'AI Analysis', color: 'text-purple-600', bg: 'bg-purple-100' },
-  reviewed: { icon: '👤', label: 'Reviewed', color: 'text-green-600', bg: 'bg-green-100' },
-  default: { icon: '◷', label: 'Event', color: 'text-gray-500', bg: 'bg-gray-100' },
+const EV = {
+  submitted: { icon: '📥', label: 'Submitted',   color: '#1D9E75', bg: '#E1F5EE' },
+  analyzed:  { icon: '🤖', label: 'AI Analysis', color: '#5B5BD6', bg: '#EDEDF9' },
+  reviewed:  { icon: '👤', label: 'Reviewed',    color: '#1D9E75', bg: '#E1F5EE' },
+  default:   { icon: '◷',  label: 'Event',       color: '#9B9A96', bg: '#F1EFE8' },
 }
 
-function formatDate(iso) {
+function fmt(iso) {
   if (!iso) return ''
   return new Date(iso).toLocaleString(undefined, {
     year: 'numeric', month: 'short', day: 'numeric',
@@ -16,51 +16,68 @@ function formatDate(iso) {
 }
 
 export default function AuditTimeline({ events }) {
-  if (!events || events.length === 0) {
+  if (!events?.length) {
     return (
-      <div className="text-sm text-vera-text-muted py-4 text-center">
+      <p style={{ fontSize: 14, color: '#9B9A96', textAlign: 'center', padding: '16px 0' }}>
         No audit events yet.
-      </div>
+      </p>
     )
   }
 
   return (
-    <ol className="relative flex flex-col gap-0" aria-label="Audit timeline">
-      {events.map((event, i) => {
-        const cfg = EVENT_CONFIG[event.event_type] || EVENT_CONFIG.default
+    <ol style={{ listStyle: 'none', margin: 0, padding: 0 }} aria-label="Audit trail">
+      {events.map((ev, i) => {
+        const cfg = EV[ev.event_type] || EV.default
         const isLast = i === events.length - 1
         return (
-          <li key={event.id} className="flex gap-4 relative">
-            {/* Connector line */}
+          <li key={ev.id} style={{ display: 'flex', gap: 12, position: 'relative' }}>
+            {/* Vertical line */}
             {!isLast && (
-              <div className="absolute left-4 top-8 bottom-0 w-0.5 bg-vera-border" />
+              <div style={{
+                position: 'absolute', left: 15, top: 32,
+                bottom: 0, width: 2, background: '#D3D1C7',
+              }} />
             )}
 
             {/* Icon */}
-            <div className={`w-8 h-8 rounded-full ${cfg.bg} flex items-center justify-center text-sm shrink-0 z-10`}>
+            <div style={{
+              width: 32, height: 32, borderRadius: '50%',
+              background: cfg.bg, display: 'flex',
+              alignItems: 'center', justifyContent: 'center',
+              fontSize: 14, flexShrink: 0, zIndex: 1,
+              border: `2px solid ${cfg.color}40`,
+            }}>
               {cfg.icon}
             </div>
 
             {/* Content */}
-            <div className="pb-5 flex-1 min-w-0">
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className={`text-sm font-semibold ${cfg.color}`}>{cfg.label}</span>
-                {event.actor && (
-                  <span className="text-xs text-vera-text-muted bg-vera-bg px-2 py-0.5 rounded-full border border-vera-border">
-                    by {event.actor}
-                  </span>
+            <div style={{ paddingBottom: isLast ? 0 : 20, flex: 1 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                <span style={{ fontSize: 13, fontWeight: 500, color: cfg.color }}>{cfg.label}</span>
+                {ev.actor && (
+                  <span style={{
+                    fontSize: 11, color: '#5F5E5A',
+                    background: '#F1EFE8', border: '0.5px solid #D3D1C7',
+                    borderRadius: 4, padding: '1px 6px',
+                  }}>by {ev.actor}</span>
                 )}
               </div>
-              <p className="text-xs text-vera-text-muted mt-0.5">{formatDate(event.timestamp)}</p>
+              <p style={{ fontSize: 11, color: '#9B9A96', margin: '2px 0 6px' }}>{fmt(ev.timestamp)}</p>
 
-              {event.event_data && Object.keys(event.event_data).length > 0 && (
-                <div className="mt-2 bg-vera-bg rounded-xl px-3 py-2 text-xs text-vera-text-secondary border border-vera-border">
-                  {Object.entries(event.event_data)
+              {ev.event_data && Object.keys(ev.event_data).length > 0 && (
+                <div style={{
+                  background: '#F1EFE8', border: '0.5px solid #D3D1C7',
+                  borderRadius: 8, padding: '8px 10px', fontSize: 12,
+                  color: '#5F5E5A',
+                }}>
+                  {Object.entries(ev.event_data)
                     .filter(([k]) => k !== 'source')
                     .map(([k, v]) => (
-                      <div key={k} className="flex gap-2">
-                        <span className="text-vera-text-muted capitalize">{k.replace(/_/g, ' ')}:</span>
-                        <span className="font-medium">{String(v)}</span>
+                      <div key={k}>
+                        <span style={{ color: '#9B9A96', textTransform: 'capitalize' }}>
+                          {k.replace(/_/g, ' ')}:
+                        </span>{' '}
+                        <span style={{ color: '#2C2C2A', fontWeight: 500 }}>{String(v)}</span>
                       </div>
                     ))}
                 </div>

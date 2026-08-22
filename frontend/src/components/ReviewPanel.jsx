@@ -4,27 +4,30 @@ import { submitReview } from '../api/client'
 const DECISIONS = [
   {
     value: 'Verified',
-    label: 'Mark as Verified',
-    desc: 'Submission has been reviewed and appears to be in order.',
-    cls: 'border-green-300 bg-green-50 text-green-800 hover:border-green-400 hover:bg-green-100',
-    activeCls: 'border-green-500 bg-green-100 ring-2 ring-green-400',
-    icon: '✓',
+    label: 'Approve',
+    desc: 'Submission reviewed and appears in order.',
+    color: '#1D9E75',
+    bg: '#E1F5EE',
+    border: '#A8DCC7',
+    activeBorder: '#1D9E75',
   },
   {
     value: 'Needs Further Review',
-    label: 'Needs Further Review',
-    desc: 'Requires additional documentation or clarification before proceeding.',
-    cls: 'border-amber-300 bg-amber-50 text-amber-800 hover:border-amber-400 hover:bg-amber-100',
-    activeCls: 'border-amber-500 bg-amber-100 ring-2 ring-amber-400',
-    icon: '⚑',
+    label: 'Request Information',
+    desc: 'Needs additional documentation before proceeding.',
+    color: '#BA7517',
+    bg: '#FAEEDA',
+    border: '#E0C27A',
+    activeBorder: '#BA7517',
   },
   {
     value: 'Dismissed',
     label: 'Dismiss / No Issue',
-    desc: 'Reviewed and confirmed — no significant issues found.',
-    cls: 'border-gray-300 bg-gray-50 text-gray-700 hover:border-gray-400 hover:bg-gray-100',
-    activeCls: 'border-gray-400 bg-gray-100 ring-2 ring-gray-300',
-    icon: '○',
+    desc: 'Reviewed — no significant issues found.',
+    color: '#5F5E5A',
+    bg: '#F1EFE8',
+    border: '#D3D1C7',
+    activeBorder: '#5F5E5A',
   },
 ]
 
@@ -45,98 +48,117 @@ export default function ReviewPanel({ submissionId, existingReview, onReviewed }
       setDone(true)
       onReviewed?.(res.data)
     } catch (err) {
-      setError(err.response?.data?.detail || 'Failed to submit review. Please try again.')
+      setError(err.response?.data?.detail || 'Failed to submit. Please try again.')
     } finally {
       setSubmitting(false)
     }
   }
 
   return (
-    <div className="vera-card p-6">
+    <div className="v-card" style={{ padding: '16px' }}>
       {/* Header */}
-      <div className="flex items-center gap-3 mb-5">
-        <div className="w-9 h-9 bg-vera-primary-light rounded-xl flex items-center justify-center text-vera-primary font-bold text-lg">
-          ≡
-        </div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
+        <div style={{
+          width: 34, height: 34, background: '#E1F5EE',
+          borderRadius: 8, display: 'flex', alignItems: 'center',
+          justifyContent: 'center', fontSize: 16, color: '#1D9E75',
+        }}>≡</div>
         <div>
-          <h3 className="vera-subsection-title">Reviewer Decision</h3>
-          <p className="text-xs text-vera-text-muted mt-0.5">
-            Final decision belongs to the human reviewer
-          </p>
+          <h3 style={{ margin: 0, fontSize: 16 }}>Reviewer Decision</h3>
+          <p style={{ margin: 0, fontSize: 12, color: '#9B9A96' }}>Final decision belongs to the human reviewer</p>
         </div>
       </div>
 
-      {/* Important disclaimer */}
-      <div className="bg-vera-bg border border-vera-border rounded-xl px-4 py-3 mb-5 text-xs text-vera-text-secondary leading-relaxed">
-        <strong className="text-vera-text">Important:</strong> The AI assessment above is advisory only.
-        The procurement decision rests entirely with the human reviewer based on a full review of
-        all available information.
+      {/* Disclaimer */}
+      <div style={{
+        padding: '10px 12px',
+        background: '#F1EFE8',
+        border: '0.5px solid #D3D1C7',
+        borderRadius: 8,
+        fontSize: 12,
+        color: '#5F5E5A',
+        lineHeight: 1.5,
+        marginBottom: 14,
+      }}>
+        <strong style={{ color: '#2C2C2A' }}>Important:</strong> The AI assessment is advisory only.
+        The procurement decision rests entirely with the human reviewer.
       </div>
 
       {done && !error ? (
-        <div className="text-center py-6">
-          <div className="text-4xl mb-3">
+        <div style={{ textAlign: 'center', padding: '20px 0' }}>
+          <div style={{ fontSize: 32, marginBottom: 8 }}>
             {decision === 'Verified' ? '✅' : decision === 'Needs Further Review' ? '🔍' : '○'}
           </div>
-          <p className="font-semibold text-vera-text">{decision}</p>
-          {note && <p className="text-sm text-vera-text-muted mt-2 italic">"{note}"</p>}
-          <button
-            onClick={() => setDone(false)}
-            className="vera-btn-ghost mt-4 text-sm"
-          >
+          <p style={{ fontSize: 14, fontWeight: 500, margin: '0 0 6px' }}>{decision}</p>
+          {note && <p style={{ fontSize: 12, color: '#5F5E5A', fontStyle: 'italic' }}>"{note}"</p>}
+          <button className="v-btn-ghost" onClick={() => setDone(false)} style={{ marginTop: 12 }}>
             Update Decision
           </button>
         </div>
       ) : (
         <form onSubmit={handleSubmit}>
-          <div className="flex flex-col gap-3 mb-5">
-            {DECISIONS.map((d) => (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 14 }}>
+            {DECISIONS.map(d => (
               <button
                 type="button"
                 key={d.value}
                 onClick={() => setDecision(d.value)}
-                className={`rounded-xl border-2 p-4 text-left transition-all duration-150 ${
-                  decision === d.value ? d.activeCls : d.cls
-                }`}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 12,
+                  padding: '12px 14px',
+                  border: `2px solid ${decision === d.value ? d.activeBorder : d.border}`,
+                  borderRadius: 8,
+                  background: decision === d.value ? d.bg : '#fff',
+                  cursor: 'pointer',
+                  textAlign: 'left',
+                  transition: 'all 150ms',
+                  outline: 'none',
+                }}
               >
-                <div className="flex items-center gap-2.5">
-                  <span className="text-xl font-bold">{d.icon}</span>
-                  <div>
-                    <p className="font-semibold text-sm">{d.label}</p>
-                    <p className="text-xs opacity-75 mt-0.5">{d.desc}</p>
-                  </div>
+                <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true" style={{ flexShrink: 0 }}>
+                  <circle cx="10" cy="10" r="9"
+                    fill={decision === d.value ? d.color : 'transparent'}
+                    stroke={d.color} strokeWidth="2"
+                  />
                   {decision === d.value && (
-                    <span className="ml-auto text-xs font-bold opacity-75">Selected</span>
+                    <circle cx="10" cy="10" r="4" fill="#fff" />
                   )}
+                </svg>
+                <div>
+                  <div style={{ fontSize: 14, fontWeight: 500, color: '#2C2C2A' }}>{d.label}</div>
+                  <div style={{ fontSize: 12, color: '#5F5E5A', marginTop: 2 }}>{d.desc}</div>
                 </div>
               </button>
             ))}
           </div>
 
-          <div className="mb-5">
-            <label className="vera-label" htmlFor="reviewer-note">
-              Reviewer Notes <span className="font-normal text-vera-text-muted">(optional)</span>
+          <div style={{ marginBottom: 14 }}>
+            <label className="v-label" htmlFor="rev-note">
+              Reviewer Notes <span style={{ color: '#9B9A96' }}>(optional)</span>
             </label>
             <textarea
-              id="reviewer-note"
-              className="vera-input resize-none"
+              id="rev-note"
+              className="v-textarea"
               rows={3}
-              placeholder="Add notes or justification for this decision..."
+              placeholder="Add notes or justification..."
               value={note}
-              onChange={(e) => setNote(e.target.value)}
+              onChange={e => setNote(e.target.value)}
             />
           </div>
 
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-xl mb-4">
-              {error}
-            </div>
+            <div style={{
+              padding: '10px 12px', background: '#FAECE7',
+              border: '0.5px solid #E8B89F', borderRadius: 8,
+              fontSize: 12, color: '#712B13', marginBottom: 12,
+            }}>{error}</div>
           )}
 
           <button
             type="submit"
             disabled={!decision || submitting}
-            className="vera-btn-primary w-full disabled:opacity-40 disabled:cursor-not-allowed"
+            className="v-btn v-btn-primary"
+            style={{ width: '100%' }}
           >
             {submitting ? 'Submitting...' : 'Submit Decision'}
           </button>

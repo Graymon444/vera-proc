@@ -1,100 +1,119 @@
 import React, { useState } from 'react'
-import { NavLink, useLocation } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 
-const navItems = [
-  { to: '/', label: 'Dashboard', icon: '⊡' },
-  { to: '/queue', label: 'Review Queue', icon: '≡' },
-  { to: '/submit', label: 'New Submission', icon: '+' },
-  { to: '/audit', label: 'Audit Log', icon: '◷' },
+const NAV = [
+  { to: '/',      end: true,  icon: '⊡', label: 'Dashboard' },
+  { to: '/queue', end: false, icon: '≡', label: 'Review Queue' },
+  { to: '/submit',end: false, icon: '+', label: 'New Submission' },
+  { to: '/audit', end: false, icon: '◷', label: 'Audit Log' },
 ]
 
 export default function NavBar() {
-  const [mobileOpen, setMobileOpen] = useState(false)
-  const location = useLocation()
+  const [open, setOpen] = useState(false)
 
   return (
-    <header className="bg-white border-b border-vera-border sticky top-0 z-50 shadow-nav">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6">
-        <div className="flex items-center justify-between h-16">
+    <header style={{
+      background: '#FFFFFF',
+      borderBottom: '0.5px solid #D3D1C7',
+      position: 'sticky',
+      top: 0,
+      zIndex: 100,
+      boxShadow: '0 1px 0 #D3D1C7',
+    }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 56 }}>
+
           {/* Logo */}
-          <NavLink to="/" className="flex items-center gap-3">
-            <div className="w-9 h-9 bg-vera-primary rounded-xl flex items-center justify-center text-white font-black text-sm tracking-tight">
-              V
-            </div>
-            <div className="leading-tight">
-              <div className="font-bold text-vera-text text-base tracking-tight">VERA</div>
-              <div className="text-xs text-vera-text-muted hidden sm:block">
-                Verification &amp; Risk Assessment
-              </div>
+          <NavLink to="/" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}>
+            <div style={{
+              width: 34, height: 34,
+              background: '#1D9E75',
+              borderRadius: 10,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              color: '#fff', fontWeight: 500, fontSize: 16,
+            }}>V</div>
+            <div>
+              <div style={{ fontSize: 16, fontWeight: 500, color: '#2C2C2A', lineHeight: 1.2 }}>VERA</div>
+              <div style={{ fontSize: 11, color: '#9B9A96', lineHeight: 1 }}>Procurement Verification</div>
             </div>
           </NavLink>
 
           {/* Desktop nav */}
-          <nav className="hidden md:flex items-center gap-1">
-            {navItems.map((item) => (
+          <nav style={{ display: 'flex', gap: 4 }} className="hidden-mobile" aria-label="Main navigation">
+            {NAV.map(item => (
               <NavLink
                 key={item.to}
                 to={item.to}
-                end={item.to === '/'}
-                className={({ isActive }) =>
-                  `flex items-center gap-2 px-4 py-2 rounded-btn text-sm font-medium transition-all duration-150 ${
-                    isActive
-                      ? 'bg-vera-primary-light text-vera-primary'
-                      : 'text-vera-text-secondary hover:text-vera-text hover:bg-vera-bg'
-                  }`
-                }
+                end={item.end}
+                className={({ isActive }) => isActive ? 'v-nav-link active' : 'v-nav-link'}
               >
-                <span className="text-base leading-none">{item.icon}</span>
+                <span style={{ fontSize: 15 }}>{item.icon}</span>
                 {item.label}
               </NavLink>
             ))}
           </nav>
 
-          {/* AI Disclaimer pill */}
-          <div className="hidden lg:flex items-center gap-2 bg-amber-50 border border-amber-200 text-amber-700 text-xs font-medium px-3 py-1.5 rounded-full">
-            <span>⚡</span>
-            AI Recommends. Human Decides.
+          {/* Disclaimer pill */}
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: 6,
+            background: '#FAEEDA', border: '0.5px solid #E0C27A',
+            borderRadius: 20, padding: '4px 12px',
+            fontSize: 11, color: '#633806',
+          }} className="hidden-mobile">
+            ⚡ AI Recommends · Human Decides
           </div>
 
-          {/* Mobile menu toggle */}
+          {/* Mobile hamburger */}
           <button
-            className="md:hidden p-2 rounded-btn text-vera-text-secondary hover:bg-vera-bg"
-            onClick={() => setMobileOpen(!mobileOpen)}
+            onClick={() => setOpen(o => !o)}
             aria-label="Toggle menu"
+            aria-expanded={open}
+            className="show-mobile"
+            style={{
+              background: 'none', border: 'none', cursor: 'pointer',
+              padding: 8, fontSize: 18, color: '#5F5E5A',
+            }}
           >
-            {mobileOpen ? '✕' : '☰'}
+            {open ? '✕' : '☰'}
           </button>
         </div>
       </div>
 
       {/* Mobile menu */}
-      {mobileOpen && (
-        <div className="md:hidden bg-white border-t border-vera-border px-4 pb-4">
-          <nav className="flex flex-col gap-1 mt-3">
-            {navItems.map((item) => (
+      {open && (
+        <div style={{
+          background: '#fff', borderTop: '0.5px solid #D3D1C7',
+          padding: '12px 24px 16px',
+        }}>
+          <nav style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+            {NAV.map(item => (
               <NavLink
                 key={item.to}
                 to={item.to}
-                end={item.to === '/'}
-                onClick={() => setMobileOpen(false)}
-                className={({ isActive }) =>
-                  `flex items-center gap-3 px-4 py-3 rounded-btn text-sm font-medium transition-all duration-150 ${
-                    isActive
-                      ? 'bg-vera-primary-light text-vera-primary'
-                      : 'text-vera-text-secondary hover:text-vera-text hover:bg-vera-bg'
-                  }`
-                }
+                end={item.end}
+                onClick={() => setOpen(false)}
+                className={({ isActive }) => isActive ? 'v-nav-link active' : 'v-nav-link'}
+                style={{ padding: '12px' }}
               >
-                <span>{item.icon}</span>
+                <span style={{ fontSize: 16 }}>{item.icon}</span>
                 {item.label}
               </NavLink>
             ))}
           </nav>
-          <p className="text-xs text-amber-600 text-center mt-3 pt-3 border-t border-vera-border">
-            ⚡ AI Recommends. Human Decides.
-          </p>
+          <div style={{ textAlign: 'center', marginTop: 12, fontSize: 11, color: '#BA7517' }}>
+            ⚡ AI Recommends · Human Decides
+          </div>
         </div>
       )}
+
+      <style>{`
+        @media (max-width: 768px) {
+          .hidden-mobile { display: none !important; }
+        }
+        @media (min-width: 769px) {
+          .show-mobile { display: none !important; }
+        }
+      `}</style>
     </header>
   )
 }
