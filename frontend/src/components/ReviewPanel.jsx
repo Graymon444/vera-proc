@@ -32,11 +32,11 @@ const DECISIONS = [
 ]
 
 export default function ReviewPanel({ submissionId, existingReview, onReviewed }) {
-  const [decision, setDecision] = useState(existingReview?.decision || '')
-  const [note, setNote] = useState(existingReview?.reviewer_note || '')
+  const [decision, setDecision]   = useState(existingReview?.decision || '')
+  const [note, setNote]           = useState(existingReview?.reviewer_note || '')
   const [submitting, setSubmitting] = useState(false)
-  const [error, setError] = useState(null)
-  const [done, setDone] = useState(!!existingReview)
+  const [error, setError]         = useState(null)
+  const [done, setDone]           = useState(!!existingReview)
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -55,17 +55,23 @@ export default function ReviewPanel({ submissionId, existingReview, onReviewed }
   }
 
   return (
-    <div className="v-card" style={{ padding: '16px' }}>
+    <div className="v-card no-hover" style={{ padding: '16px' }}>
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
         <div style={{
-          width: 34, height: 34, background: '#E1F5EE',
-          borderRadius: 8, display: 'flex', alignItems: 'center',
-          justifyContent: 'center', fontSize: 16, color: '#1D9E75',
-        }}>≡</div>
+          width: 34, height: 34,
+          background: '#E1F5EE',
+          borderRadius: 8,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          fontSize: 16, color: '#1D9E75', flexShrink: 0,
+        }}>
+          ≡
+        </div>
         <div>
           <h3 style={{ margin: 0, fontSize: 16 }}>Reviewer Decision</h3>
-          <p style={{ margin: 0, fontSize: 12, color: '#9B9A96' }}>Final decision belongs to the human reviewer</p>
+          <p style={{ margin: 0, fontSize: 12, color: '#9B9A96' }}>
+            Final decision belongs to the human reviewer
+          </p>
         </div>
       </div>
 
@@ -80,23 +86,40 @@ export default function ReviewPanel({ submissionId, existingReview, onReviewed }
         lineHeight: 1.5,
         marginBottom: 14,
       }}>
-        <strong style={{ color: '#2C2C2A' }}>Important:</strong> The AI assessment is advisory only.
-        The procurement decision rests entirely with the human reviewer.
+        <strong style={{ color: '#2C2C2A' }}>Important:</strong> The AI assessment is advisory
+        only. The procurement decision rests entirely with the human reviewer.
       </div>
 
+      {/* Done state */}
       {done && !error ? (
         <div style={{ textAlign: 'center', padding: '20px 0' }}>
           <div style={{ fontSize: 32, marginBottom: 8 }}>
-            {decision === 'Verified' ? '✅' : decision === 'Needs Further Review' ? '🔍' : '○'}
+            {decision === 'Verified'
+              ? '✅'
+              : decision === 'Needs Further Review'
+              ? '🔍'
+              : '○'}
           </div>
-          <p style={{ fontSize: 14, fontWeight: 500, margin: '0 0 6px' }}>{decision}</p>
-          {note && <p style={{ fontSize: 12, color: '#5F5E5A', fontStyle: 'italic' }}>"{note}"</p>}
-          <button className="v-btn-ghost" onClick={() => setDone(false)} style={{ marginTop: 12 }}>
+          <p style={{ fontSize: 14, fontWeight: 500, margin: '0 0 6px', color: '#2C2C2A' }}>
+            {decision}
+          </p>
+          {note && (
+            <p style={{ fontSize: 12, color: '#5F5E5A', fontStyle: 'italic', margin: '0 0 4px' }}>
+              "{note}"
+            </p>
+          )}
+          <button
+            type="button"
+            className="v-btn-ghost"
+            onClick={() => setDone(false)}
+            style={{ marginTop: 12 }}
+          >
             Update Decision
           </button>
         </div>
       ) : (
         <form onSubmit={handleSubmit}>
+          {/* Radio-style decision buttons */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 14 }}>
             {DECISIONS.map(d => (
               <button
@@ -104,37 +127,53 @@ export default function ReviewPanel({ submissionId, existingReview, onReviewed }
                 key={d.value}
                 onClick={() => setDecision(d.value)}
                 style={{
-                  display: 'flex', alignItems: 'center', gap: 12,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 12,
                   padding: '12px 14px',
                   border: `2px solid ${decision === d.value ? d.activeBorder : d.border}`,
                   borderRadius: 8,
                   background: decision === d.value ? d.bg : '#fff',
                   cursor: 'pointer',
                   textAlign: 'left',
-                  transition: 'all 150ms',
+                  transition: 'all 150ms cubic-bezier(0.2,0,0.8,1)',
                   outline: 'none',
+                  width: '100%',
                 }}
               >
-                <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true" style={{ flexShrink: 0 }}>
-                  <circle cx="10" cy="10" r="9"
+                {/* Animated radio circle */}
+                <svg
+                  width="20" height="20" viewBox="0 0 20 20"
+                  aria-hidden="true"
+                  style={{ flexShrink: 0 }}
+                >
+                  <circle
+                    cx="10" cy="10" r="9"
                     fill={decision === d.value ? d.color : 'transparent'}
-                    stroke={d.color} strokeWidth="2"
+                    stroke={d.color}
+                    strokeWidth="2"
                   />
                   {decision === d.value && (
                     <circle cx="10" cy="10" r="4" fill="#fff" />
                   )}
                 </svg>
                 <div>
-                  <div style={{ fontSize: 14, fontWeight: 500, color: '#2C2C2A' }}>{d.label}</div>
-                  <div style={{ fontSize: 12, color: '#5F5E5A', marginTop: 2 }}>{d.desc}</div>
+                  <div style={{ fontSize: 14, fontWeight: 500, color: '#2C2C2A' }}>
+                    {d.label}
+                  </div>
+                  <div style={{ fontSize: 12, color: '#5F5E5A', marginTop: 2 }}>
+                    {d.desc}
+                  </div>
                 </div>
               </button>
             ))}
           </div>
 
+          {/* Notes */}
           <div style={{ marginBottom: 14 }}>
             <label className="v-label" htmlFor="rev-note">
-              Reviewer Notes <span style={{ color: '#9B9A96' }}>(optional)</span>
+              Reviewer Notes{' '}
+              <span style={{ color: '#9B9A96' }}>(optional)</span>
             </label>
             <textarea
               id="rev-note"
@@ -148,12 +187,19 @@ export default function ReviewPanel({ submissionId, existingReview, onReviewed }
 
           {error && (
             <div style={{
-              padding: '10px 12px', background: '#FAECE7',
-              border: '0.5px solid #E8B89F', borderRadius: 8,
-              fontSize: 12, color: '#712B13', marginBottom: 12,
-            }}>{error}</div>
+              padding: '10px 12px',
+              background: '#FAECE7',
+              border: '0.5px solid #E8B89F',
+              borderRadius: 8,
+              fontSize: 12,
+              color: '#712B13',
+              marginBottom: 12,
+            }}>
+              {error}
+            </div>
           )}
 
+          {/* Full-width submit */}
           <button
             type="submit"
             disabled={!decision || submitting}

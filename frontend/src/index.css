@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ─── VERA Design Tokens ──────────────────────────────────────────────────── */
+/* ─── VERA One UI Design Tokens ───────────────────────────────────────────── */
 :root {
   --teal-50:  #E1F5EE;
   --teal-500: #1D9E75;
@@ -20,9 +20,15 @@
   --green-500: #639922;
   --green-900: #27500A;
 
+  --gray-50:  #F1EFE8;
+  --gray-100: #FFFFFF;
+  --gray-600: #5F5E5A;
+  --gray-900: #2C2C2A;
+  --border-color: #D3D1C7;
+
+  /* Semantic aliases */
   --surface-0: #F1EFE8;
   --surface-1: #FFFFFF;
-
   --ink-primary:   #2C2C2A;
   --ink-secondary: #5F5E5A;
   --ink-muted:     #9B9A96;
@@ -42,6 +48,24 @@
   --easing: cubic-bezier(0.2, 0, 0.8, 1);
 }
 
+/* ─── Dark mode tokens ────────────────────────────────────────────────────── */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --gray-50:  #1C1C1A;
+    --gray-100: #2C2C2A;
+    --gray-600: #B4B2A9;
+    --gray-900: #F1EFE8;
+    --border-color: #3D3D3A;
+
+    --surface-0: #1C1C1A;
+    --surface-1: #2C2C2A;
+    --ink-primary:   #F1EFE8;
+    --ink-secondary: #B4B2A9;
+    --ink-muted:     #6B6A66;
+    --ink-border:    #3D3D3A;
+  }
+}
+
 /* ─── Base ────────────────────────────────────────────────────────────────── */
 @layer base {
   *, *::before, *::after { box-sizing: border-box; }
@@ -52,6 +76,7 @@
     background-color: var(--surface-0);
     color: var(--ink-primary);
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 14px;
     font-weight: 400;
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
@@ -74,22 +99,31 @@
 /* ─── Components ──────────────────────────────────────────────────────────── */
 @layer components {
 
-  /* Card */
+  /* ── Card ── */
   .v-card {
     background: var(--surface-1);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-sm);
-    border: 0.5px solid var(--ink-border);
-    transition: box-shadow var(--duration-base) var(--easing);
+    border: 0.5px solid var(--border-color);
+    transition:
+      box-shadow var(--duration-base) var(--easing),
+      transform var(--duration-base) var(--easing);
   }
-  .v-card:hover { box-shadow: var(--shadow-md); }
+  .v-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: scale(1.02);
+  }
+  /* Prevent scale on cards that contain interactive content */
+  .v-card.no-hover:hover { transform: none; box-shadow: var(--shadow-sm); }
+  .v-card.interactive:hover { transform: scale(1.02); box-shadow: var(--shadow-md); }
 
-  /* Buttons */
+  /* ── Buttons ── */
   .v-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 6px;
+    height: 48px;
     min-height: 48px;
     padding: 0 24px;
     border-radius: var(--radius-md);
@@ -97,12 +131,17 @@
     font-weight: 500;
     border: none;
     cursor: pointer;
+    text-decoration: none;
     transition:
-      background var(--duration-fast) var(--easing),
-      transform var(--duration-fast) var(--easing);
+      background var(--duration-base) var(--easing),
+      color var(--duration-base) var(--easing),
+      border-color var(--duration-base) var(--easing),
+      transform var(--duration-base) var(--easing),
+      box-shadow var(--duration-base) var(--easing);
     outline: none;
+    white-space: nowrap;
   }
-  .v-btn:active { transform: scale(0.98); }
+  .v-btn:active  { transform: scale(0.98); }
   .v-btn:focus-visible {
     outline: 2px solid var(--teal-500);
     outline-offset: 4px;
@@ -113,34 +152,54 @@
     background: var(--teal-500);
     color: #fff;
   }
-  .v-btn-primary:hover:not(:disabled) { background: #179165; }
+  .v-btn-primary:hover:not(:disabled) { background: var(--teal-900); }
 
   .v-btn-secondary {
-    background: #ECEAE3;
-    color: var(--ink-primary);
+    background: var(--gray-50);
+    color: var(--gray-900);
+    border: 0.5px solid var(--border-color);
   }
-  .v-btn-secondary:hover:not(:disabled) { background: #E0DED7; }
+  .v-btn-secondary:hover:not(:disabled) { background: #E8E6DF; }
 
   .v-btn-danger {
     background: var(--red-500);
     color: #fff;
   }
-  .v-btn-danger:hover:not(:disabled) { background: #C24F28; }
+  .v-btn-danger:hover:not(:disabled) { background: var(--red-900); }
 
   .v-btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
     background: transparent;
     color: var(--teal-500);
     min-height: 36px;
+    height: auto;
     padding: 0 12px;
+    border-radius: var(--radius-md);
+    font-size: 14px;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    transition:
+      background var(--duration-base) var(--easing),
+      color var(--duration-base) var(--easing);
+    outline: none;
   }
   .v-btn-ghost:hover:not(:disabled) { background: var(--teal-50); }
+  .v-btn-ghost:focus-visible {
+    outline: 2px solid var(--teal-500);
+    outline-offset: 4px;
+  }
 
-  /* Input */
+  /* ── Inputs ── */
   .v-input {
     width: 100%;
     height: 48px;
     padding: 0 14px;
-    border: 1px solid var(--ink-border);
+    border: 1px solid var(--border-color);
     border-radius: var(--radius-md);
     font-size: 14px;
     color: var(--ink-primary);
@@ -154,7 +213,7 @@
   .v-textarea {
     width: 100%;
     padding: 12px 14px;
-    border: 1px solid var(--ink-border);
+    border: 1px solid var(--border-color);
     border-radius: var(--radius-md);
     font-size: 14px;
     color: var(--ink-primary);
@@ -163,6 +222,7 @@
     resize: none;
     transition: border-color var(--duration-fast);
     line-height: 1.6;
+    font-family: inherit;
   }
   .v-textarea:focus { border-color: var(--teal-500); }
 
@@ -170,7 +230,7 @@
     width: 100%;
     height: 48px;
     padding: 0 14px;
-    border: 1px solid var(--ink-border);
+    border: 1px solid var(--border-color);
     border-radius: var(--radius-md);
     font-size: 14px;
     color: var(--ink-primary);
@@ -178,6 +238,8 @@
     outline: none;
     appearance: none;
     cursor: pointer;
+    font-family: inherit;
+    transition: border-color var(--duration-fast);
   }
   .v-select:focus { border-color: var(--teal-500); }
 
@@ -186,13 +248,14 @@
     font-size: 12px;
     color: var(--ink-secondary);
     margin-bottom: 6px;
+    line-height: 1.5;
   }
 
-  /* Data row (two-column table) */
+  /* ── Data rows ── */
   .v-data-row {
     display: flex;
     padding: 10px 0;
-    border-bottom: 0.5px solid var(--ink-border);
+    border-bottom: 0.5px solid var(--border-color);
     gap: 12px;
   }
   .v-data-row:last-child { border-bottom: none; }
@@ -201,18 +264,26 @@
     font-size: 12px;
     color: var(--ink-secondary);
     flex-shrink: 0;
+    line-height: 1.5;
   }
   .v-data-row-value {
     flex: 1;
     font-size: 14px;
     color: var(--ink-primary);
+    line-height: 1.5;
+    word-break: break-word;
   }
 
-  /* Skeleton loading */
+  /* ── Skeleton ── */
   .v-skeleton {
-    background: linear-gradient(90deg, #E8E6DF 25%, #F0EEE8 50%, #E8E6DF 75%);
+    background: linear-gradient(
+      90deg,
+      #E8E6DF 25%,
+      #F0EEE8 50%,
+      #E8E6DF 75%
+    );
     background-size: 200% 100%;
-    animation: skeleton-pulse 2s infinite;
+    animation: skeleton-pulse 1.6s ease-in-out infinite;
     border-radius: var(--radius-md);
   }
   @keyframes skeleton-pulse {
@@ -220,22 +291,22 @@
     100% { background-position: -200% 0; }
   }
 
-  /* Collapsible section */
+  /* ── Collapsible ── */
   .v-collapsible-content {
     overflow: hidden;
-    transition: max-height var(--duration-base) var(--easing),
-                opacity var(--duration-base) var(--easing);
+    transition:
+      height var(--duration-base) var(--easing),
+      opacity var(--duration-base) var(--easing);
   }
   .v-collapsible-content[data-open="false"] {
-    max-height: 0;
+    height: 0;
     opacity: 0;
   }
   .v-collapsible-content[data-open="true"] {
-    max-height: 2000px;
     opacity: 1;
   }
 
-  /* Nav */
+  /* ── Nav links ── */
   .v-nav-link {
     display: flex;
     align-items: center;
@@ -245,8 +316,18 @@
     font-size: 14px;
     color: var(--ink-secondary);
     text-decoration: none;
-    transition: background var(--duration-fast), color var(--duration-fast);
+    transition:
+      background var(--duration-fast) var(--easing),
+      color var(--duration-fast) var(--easing);
+    white-space: nowrap;
   }
-  .v-nav-link:hover { background: var(--teal-50); color: var(--teal-500); }
-  .v-nav-link.active { background: var(--teal-50); color: var(--teal-500); font-weight: 500; }
+  .v-nav-link:hover {
+    background: var(--teal-50);
+    color: var(--teal-500);
+  }
+  .v-nav-link.active {
+    background: var(--teal-50);
+    color: var(--teal-500);
+    font-weight: 500;
+  }
 }
