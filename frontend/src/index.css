@@ -1,0 +1,76 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-vera-bg text-vera-text font-sans antialiased;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+}
+
+@layer components {
+  .vera-card {
+    @apply bg-vera-card rounded-card shadow-card border border-vera-border;
+  }
+
+  .vera-btn-primary {
+    @apply bg-vera-primary text-white font-semibold px-5 py-2.5 rounded-btn
+           hover:bg-vera-primary-hover active:scale-95 transition-all duration-150
+           focus:outline-none focus:ring-2 focus:ring-vera-primary focus:ring-offset-2;
+  }
+
+  .vera-btn-secondary {
+    @apply bg-white text-vera-text font-medium px-5 py-2.5 rounded-btn border border-vera-border
+           hover:bg-vera-bg active:scale-95 transition-all duration-150
+           focus:outline-none focus:ring-2 focus:ring-vera-primary focus:ring-offset-2;
+  }
+
+  .vera-btn-ghost {
+    @apply text-vera-primary font-medium px-4 py-2 rounded-btn
+           hover:bg-vera-primary-light active:scale-95 transition-all duration-150
+           focus:outline-none focus:ring-2 focus:ring-vera-primary focus:ring-offset-2;
+  }
+
+  .vera-input {
+    @apply w-full px-4 py-3 rounded-btn border border-vera-border bg-white
+           text-vera-text placeholder-vera-text-muted
+           focus:outline-none focus:ring-2 focus:ring-vera-primary focus:border-vera-primary
+           transition-all duration-150;
+  }
+
+  .vera-label {
+    @apply block text-sm font-semibold text-vera-text mb-1.5;
+  }
+
+  .vera-section-title {
+    @apply text-2xl font-bold text-vera-text tracking-tight;
+  }
+
+  .vera-subsection-title {
+    @apply text-lg font-semibold text-vera-text;
+  }
+
+  .risk-badge-high {
+    @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-badge
+           bg-vera-risk-high-bg text-vera-risk-high border border-vera-risk-high-border
+           text-xs font-bold uppercase tracking-wide;
+  }
+
+  .risk-badge-medium {
+    @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-badge
+           bg-vera-risk-medium-bg text-vera-risk-medium border border-vera-risk-medium-border
+           text-xs font-bold uppercase tracking-wide;
+  }
+
+  .risk-badge-low {
+    @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-badge
+           bg-vera-risk-low-bg text-vera-risk-low border border-vera-risk-low-border
+           text-xs font-bold uppercase tracking-wide;
+  }
+}
