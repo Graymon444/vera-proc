@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from backend.db.database import get_db
 from backend.db import models as db_models
 from backend.models.schemas import DashboardStats
+from backend.risk_engine.evaluator import evaluate_model
 
 router = APIRouter(prefix="/api/dashboard", tags=["dashboard"])
 
@@ -64,3 +65,13 @@ def get_dashboard_stats(db: Session = Depends(get_db)):
         reviewed=reviewed,
         recent_analyses=recent,
     )
+
+
+@router.get("/model-eval")
+def get_model_evaluation(db: Session = Depends(get_db)):
+    """
+    Model validation endpoint.
+    Returns R² score measuring alignment between ML model and rule engine.
+    Higher R² = ML detects same patterns as explicit rules.
+    """
+    return evaluate_model(db)

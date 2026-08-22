@@ -176,11 +176,19 @@ def compute_rule_score(flags: list[dict]) -> float:
     """
     Convert triggered rule flags into a 0–100 rule score.
     Each severity level contributes weighted points.
+    Multiple flags compound — reflects real-world co-occurrence of signals.
     Capped at 100.
     """
-    severity_weights = {"high": 35, "medium": 20, "low": 8}
-    total = sum(severity_weights.get(f.get("severity", "low"), 0) for f in flags)
-    return min(total, 100.0)
+    severity_weights = {"high": 40, "medium": 25, "low": 10}
+    base = sum(severity_weights.get(f.get("severity", "low"), 0) for f in flags)
+
+    # Co-occurrence bonus: multiple flags together are more suspicious
+    if len(flags) >= 3:
+        base = base * 1.25
+    elif len(flags) == 2:
+        base = base * 1.10
+
+    return min(base, 100.0)
 
 
 def run_all_rules(

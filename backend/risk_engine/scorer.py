@@ -111,7 +111,18 @@ def analyze_submission(
         if_raw = None
 
     # ── Step 3: Combined score ───────────────────────────────────────────────
-    combined = ML_SCORE_WEIGHT * ml_score + RULE_SCORE_WEIGHT * rule_score
+    # When rules fire strongly, give them more weight — explicit evidence
+    # should dominate over statistical anomaly detection.
+    if rule_score >= 70:
+        # Strong rule signal: rules dominate 70/30
+        combined = 0.30 * ml_score + 0.70 * rule_score
+    elif rule_score >= 40:
+        # Moderate signal: balanced
+        combined = 0.45 * ml_score + 0.55 * rule_score
+    else:
+        # Weak/no rule signal: ML has more say
+        combined = 0.60 * ml_score + 0.40 * rule_score
+
     final_score = round(min(combined, 100.0), 1)
     risk_level = _get_risk_level(final_score)
 

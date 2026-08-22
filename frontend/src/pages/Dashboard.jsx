@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { getDashboardStats, seedDemoData } from '../api/client'
+import { getDashboardStats, seedDemoData, seedGovData, getModelEval } from '../api/client'
 import RiskBadge from '../components/RiskBadge'
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell,
@@ -31,11 +31,16 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true)
   const [seeding, setSeeding] = useState(false)
   const [seedMsg, setSeedMsg] = useState(null)
+  const [modelEval, setModelEval] = useState(null)
 
   async function load() {
     try {
-      const res = await getDashboardStats()
-      setStats(res.data)
+      const [statsRes, evalRes] = await Promise.all([
+        getDashboardStats(),
+        getModelEval(),
+      ])
+      setStats(statsRes.data)
+      setModelEval(evalRes.data)
     } catch (e) {
       // empty
     } finally {
@@ -49,8 +54,8 @@ export default function Dashboard() {
     setSeeding(true)
     setSeedMsg(null)
     try {
-      const res = await seedDemoData(false)
-      setSeedMsg(res.data.message)
+      const res = await seedGovData(60)
+      setSeedMsg(`${res.data.message} (Low: ${res.data.risk_distribution?.Low ?? 0}, Medium: ${res.data.risk_distribution?.Medium ?? 0}, High: ${res.data.risk_distribution?.High ?? 0})`)
       load()
     } catch {
       setSeedMsg('Failed to seed data.')
@@ -225,6 +230,72 @@ export default function Dashboard() {
               )}
             </div>
           </div>
+
+          {/* Model Validation Card */}
+          {modelEval && (
+            <div className="vera-card p-6 mt-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-9 h-9 bg-purple-100 rounded-xl flex items-center justify-center text-xl">🤖</div>
+                <div>
+                  <h2 className="vera-subsection-title">Model Validation</h2>
+                  <p className="text-xs text-vera-text-muted">ML ↔ Rule Engine alignment (R² score)</p>
+                </div>
+                <span className="ml-auto text-xs font-semibold bg-vera-primary-light text-vera-primary px-3 py-1 rounded-full border border-blue-200">
+                  AI Assessment
+                </span>
+              </div>
+
+              {modelEval.status === 'ok' ? (
+                <div className="grid sm:grid-cols-3 gap-4">
+                  {/* R² Score */}
+                  <div className="bg-vera-bg rounded-xl p-4 text-center border border-vera-border">
+                    <p className="text-xs text-vera-text-muted mb-1">R² Score</p>
+                    <p className={`text-4xl font-bold ${
+                      modelEval.r2_score >= 0.8 ? 'text-green-600' :
+                      modelEval.r2_score >= 0.6 ? 'text-amber-600' : 'text-red-600'
+                    }`}>{modelEval.r2_score}</p>
+                    <p className={`text-xs font-semibold mt-1 ${
+                      modelEval.r2_score >= 0.8 ? 'text-green-600' :
+                      modelEval.r2_score >= 0.6 ? 'text-amber-600' : 'text-red-600'
+                    }`}>{modelEval.alignment_level} Alignment</p>
+                  </div>
+
+                  {/* Stats */}
+                  <div className="bg-vera-bg rounded-xl p-4 border border-vera-border">
+                    <p className="text-xs text-vera-text-muted mb-2">Score Statistics</p>
+                    <div className="text-xs space-y-1.5">
+                      <div className="flex justify-between">
+                        <span className="text-vera-text-muted">Samples evaluated</span>
+                        <span className="font-semibold">{modelEval.sample_count}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-vera-text-muted">Rule score avg</span>
+                        <span className="font-semibold">{modelEval.rule_score_mean}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-vera-text-muted">ML score avg</span>
+                        <span className="font-semibold">{modelEval.ml_score_mean}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Interpretation */}
+                  <div className="bg-vera-bg rounded-xl p-4 border border-vera-border sm:col-span-1">
+                    <p className="text-xs text-vera-text-muted mb-2">Interpretation</p>
+                    <p className="text-xs text-vera-text leading-relaxed">{modelEval.interpretation}</p>
+                  </div>
+                </div>
+              ) : (
+                <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 text-sm text-amber-800">
+                  {modelEval.message}
+                </div>
+              )}
+
+              <p className="text-xs text-vera-text-muted mt-3 pt-3 border-t border-vera-border leading-relaxed">
+                ⚠ {modelEval.note || 'R² measures internal consistency between ML and rule engine, not ground-truth fraud detection accuracy.'}
+              </p>
+            </div>
+          )}
 
           {/* Disclaimer */}
           <div className="mt-6 bg-amber-50 border border-amber-200 rounded-xl p-4 text-xs text-amber-800 leading-relaxed">

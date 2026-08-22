@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from backend.config import APP_TITLE, APP_VERSION, APP_DESCRIPTION, CORS_ORIGINS
 from backend.db.database import engine
 from backend.db import models as db_models
-from backend.routers import submissions, reviews, audit, dashboard
+from backend.routers import submissions, reviews, audit, dashboard, admin
 
 # Create tables
 db_models.Base.metadata.create_all(bind=engine)
@@ -31,6 +31,7 @@ app.include_router(submissions.router)
 app.include_router(reviews.router)
 app.include_router(audit.router)
 app.include_router(dashboard.router)
+app.include_router(admin.router)
 
 
 @app.get("/api/health")
