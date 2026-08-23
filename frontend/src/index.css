@@ -2,109 +2,167 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ─── VERA Design Tokens — Warm Unified Palette ───────────────────────────── */
-/*
-  Satu ritme: warm-neutral dari page bg sampai ke teks.
-  Semua warna punya undertone warm (yellow-brown), tidak ada cool grey murni.
-  Primary teal dihangatkan ke arah emerald agar blend dengan warm surface.
-  Teks bukan charcoal hitam — pakai warm-brown near-black.
-*/
+/* ═══════════════════════════════════════════════════════════════════════════
+   VERA — Warm Sand & Spice Design System
+   ═══════════════════════════════════════════════════════════════════════════
+   Concept: everything reads like aged parchment, warm wood, earthy spice.
+   No cool greys. No cold blues. No pure black or pure white.
+
+   Surface family ........ cream/parchment (#F4EFE4 page, #FAF7F0 card)
+   Primary action ........ deep forest green (#2D7D52)
+   High risk ............. warm terracotta (#C05A3A)
+   Medium caution ........ golden ochre (#C08C1A)
+   Low / safe ............ dusty olive (#72941F)
+   Text hierarchy ........ espresso (#1C1814) → latte (#3A322A) → cream muted
+   ═══════════════════════════════════════════════════════════════════════════ */
+
 :root {
-  /* Primary — Warm Emerald (trust, government, stability) */
-  --teal-50:  #E2F4EC;   /* warm mint background */
-  --teal-100: #C3E8D5;   /* hover tint */
-  --teal-500: #1A9B6E;   /* slightly warmer than pure teal */
-  --teal-900: #0D6B4A;   /* dark, readable on light bg */
+  /* ── Surfaces ─────────────────────────────────────────────────────────── */
+  --bg-page:    #F4EFE4;   /* warm parchment — page background                */
+  --bg-card:    #FAF7F0;   /* near-white with warmth — card surface            */
+  --bg-sunken:  #EBE4D6;   /* recessed sections, input backgrounds             */
+  --bg-hover:   #EDE6D9;   /* row/card hover state                             */
 
-  /* Risk — Warm Coral (attention, not alarm) */
-  --red-50:  #FAEDE8;
-  --red-500: #D45A2A;    /* shifted slightly toward orange-red, warmer */
-  --red-900: #6E2910;
+  /* ── Borders ──────────────────────────────────────────────────────────── */
+  --border:     #DDD5C4;   /* default hairline                                 */
+  --border-mid: #C8BDA8;   /* stronger separation                              */
 
-  /* Caution — Warm Amber */
-  --amber-50:  #FAF0DC;
-  --amber-500: #B87215;
-  --amber-900: #613604;
+  /* ── Ink / Text ───────────────────────────────────────────────────────── */
+  --ink-1: #1C1814;        /* primary — espresso near-black                    */
+  --ink-2: #3A322A;        /* body text — warm dark brown                      */
+  --ink-3: #635A50;        /* secondary — warm mid brown                       */
+  --ink-4: #9A8F82;        /* muted — placeholder, captions                    */
 
-  /* Safe — Warm Sage */
-  --green-50:  #EBF4DF;
-  --green-500: #5E9420;
-  --green-900: #264E08;
+  /* ── Primary — Forest Green ───────────────────────────────────────────── */
+  --forest-light: #EBF4EE;  /* badge bg, subtle tints                          */
+  --forest-mid:   #CDE5D3;  /* border for teal elements                        */
+  --forest:       #2D7D52;  /* buttons, links, active nav                      */
+  --forest-dark:  #1E5C3A;  /* hover state                                     */
+  --forest-text:  #133D27;  /* text on light forest bg                         */
 
-  /* Neutral surface — warm off-white system */
-  /* All greys have a subtle warm (beige/sand) undertone */
-  --surface-0:  #F5F2EC;   /* page background — warmer than before */
-  --surface-1:  #FEFCF8;   /* card background — warm white */
-  --surface-2:  #EDE9E1;   /* subtle recessed area */
+  /* ── Terracotta — High Risk ────────────────────────────────────────────── */
+  --terra-light: #FAF0EC;   /* badge/card bg                                   */
+  --terra-mid:   #F2D9D0;   /* light tint bg                                   */
+  --terra-border:#E4B09A;   /* border                                          */
+  --terra:       #C05A3A;   /* main                                             */
+  --terra-dark:  #8F3F25;   /* text, hover                                     */
+  --terra-text:  #5C2415;   /* text on light terra bg                          */
 
-  /* Ink — warm-tinted, NOT cool charcoal */
-  --ink-primary:   #2A2722;   /* warm near-black (brown undertone) */
-  --ink-secondary: #5C5750;   /* warm medium grey */
-  --ink-muted:     #948E87;   /* warm light grey */
-  --ink-border:    #D6D1C8;   /* warm hairline */
-  --ink-divider:   #EAE6DE;   /* very subtle separation */
+  /* ── Ochre — Medium Risk ──────────────────────────────────────────────── */
+  --ochre-light: #FBF5E6;   /* badge/card bg                                   */
+  --ochre-mid:   #F5E4B8;   /* light tint bg                                   */
+  --ochre-border:#E8C97A;   /* border                                          */
+  --ochre:       #C08C1A;   /* main                                             */
+  --ochre-dark:  #8A6010;   /* text, hover                                     */
+  --ochre-text:  #5A3D08;   /* text on light ochre bg                          */
 
-  /* Legacy aliases — keep for backwards compat */
-  --gray-50:  #F5F2EC;
-  --gray-100: #FEFCF8;
-  --gray-600: #5C5750;
-  --gray-900: #2A2722;
-  --border-color: #D6D1C8;
+  /* ── Olive — Low Risk ─────────────────────────────────────────────────── */
+  --olive-light: #F2F5E8;   /* badge/card bg                                   */
+  --olive-mid:   #DEEABF;   /* light tint bg                                   */
+  --olive-border:#BDCF88;   /* border                                          */
+  --olive:       #72941F;   /* main                                             */
+  --olive-dark:  #4F6A14;   /* text, hover                                     */
+  --olive-text:  #30430C;   /* text on light olive bg                          */
 
-  /* Radii */
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
-  --radius-xl: 16px;
+  /* ── Shadows (warm-toned) ─────────────────────────────────────────────── */
+  --shadow-sm: 0 2px 8px  rgba(28, 24, 20, 0.07);
+  --shadow-md: 0 4px 12px rgba(28, 24, 20, 0.11);
+  --shadow-lg: 0 8px 24px rgba(28, 24, 20, 0.15);
 
-  /* Shadows — warm-tinted so they don't look cool/blue */
-  --shadow-sm: 0 2px 8px rgba(42, 39, 34, 0.07);
-  --shadow-md: 0 4px 12px rgba(42, 39, 34, 0.11);
-  --shadow-lg: 0 8px 24px rgba(42, 39, 34, 0.14);
+  /* ── Radii ────────────────────────────────────────────────────────────── */
+  --r-sm: 4px;
+  --r-md: 8px;
+  --r-lg: 12px;
+  --r-xl: 16px;
 
-  /* Motion */
-  --duration-fast: 150ms;
-  --duration-base: 200ms;
-  --duration-slow: 300ms;
-  --easing: cubic-bezier(0.2, 0, 0.8, 1);
+  /* ── Motion ───────────────────────────────────────────────────────────── */
+  --t-fast: 150ms;
+  --t-base: 200ms;
+  --t-slow: 300ms;
+  --ease:   cubic-bezier(0.2, 0, 0.8, 1);
+
+  /* ── Legacy aliases (backwards compat) ───────────────────────────────── */
+  --surface-0:     #F4EFE4;
+  --surface-1:     #FAF7F0;
+  --surface-2:     #EBE4D6;
+  --ink-primary:   #1C1814;
+  --ink-secondary: #635A50;
+  --ink-muted:     #9A8F82;
+  --ink-border:    #DDD5C4;
+  --gray-50:       #F4EFE4;
+  --gray-100:      #FAF7F0;
+  --gray-600:      #635A50;
+  --gray-900:      #1C1814;
+  --border-color:  #DDD5C4;
+  --teal-50:       #EBF4EE;
+  --teal-500:      #2D7D52;
+  --teal-900:      #133D27;
+  --red-50:        #FAF0EC;
+  --red-500:       #C05A3A;
+  --red-900:       #5C2415;
+  --amber-50:      #FBF5E6;
+  --amber-500:     #C08C1A;
+  --amber-900:     #5A3D08;
+  --green-50:      #F2F5E8;
+  --green-500:     #72941F;
+  --green-900:     #30430C;
 }
 
-/* ─── Dark mode — stays warm, just darker ────────────────────────────────── */
+/* ── Dark mode — same warm feel, inverted lightness ────────────────────── */
 @media (prefers-color-scheme: dark) {
   :root {
-    --surface-0:  #1E1C19;   /* warm dark — not pure black */
-    --surface-1:  #2A2722;   /* warm dark card */
-    --surface-2:  #332F2A;   /* slightly lighter recessed */
+    --bg-page:   #1C1814;
+    --bg-card:   #26211C;
+    --bg-sunken: #2E2822;
+    --bg-hover:  #33291F;
 
-    --ink-primary:   #F0EDE7;   /* warm off-white */
-    --ink-secondary: #B5AFA7;
-    --ink-muted:     #6E6860;
-    --ink-border:    #3D3930;
-    --ink-divider:   #332F2A;
+    --border:     #3D342A;
+    --border-mid: #4F4438;
 
-    --gray-50:  #1E1C19;
-    --gray-100: #2A2722;
-    --gray-600: #B5AFA7;
-    --gray-900: #F0EDE7;
-    --border-color: #3D3930;
+    --ink-1: #F0EAE0;
+    --ink-2: #D8CEBC;
+    --ink-3: #A89880;
+    --ink-4: #6B6058;
 
-    /* Tints stay warm in dark mode too */
-    --teal-50:  #1A2F27;
-    --red-50:   #2E1C17;
-    --amber-50: #2B2010;
-    --green-50: #1A2810;
+    --forest-light: #1A3326;
+    --terra-light:  #2E1A14;
+    --ochre-light:  #2C2210;
+    --olive-light:  #1C2810;
+
+    --surface-0:   #1C1814;
+    --surface-1:   #26211C;
+    --gray-50:     #1C1814;
+    --gray-100:    #26211C;
+    --gray-600:    #A89880;
+    --gray-900:    #F0EAE0;
+    --border-color:#3D342A;
+    --ink-primary:  #F0EAE0;
+    --ink-secondary:#A89880;
+    --ink-muted:    #6B6058;
+    --ink-border:   #3D342A;
   }
 }
 
-/* ─── Base ────────────────────────────────────────────────────────────────── */
+/* ── Reduced motion ─────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration:       0.01ms !important;
+    animation-iteration-count: 1     !important;
+    transition-duration:       0.01ms !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Base
+   ═══════════════════════════════════════════════════════════════════════════ */
 @layer base {
   *, *::before, *::after { box-sizing: border-box; }
 
   html { font-size: 14px; }
 
   body {
-    background-color: var(--surface-0);
-    color: var(--ink-primary);
+    background-color: var(--bg-page);
+    color: var(--ink-2);
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     font-size: 14px;
     font-weight: 400;
@@ -113,251 +171,189 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
-  h1 { font-size: 24px; font-weight: 500; line-height: 1.4; }
-  h2 { font-size: 18px; font-weight: 500; line-height: 1.4; }
-  h3 { font-size: 16px; font-weight: 500; line-height: 1.4; }
-
-  /* Respect reduced motion */
-  @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after {
-      animation-duration: 0.01ms !important;
-      transition-duration: 0.01ms !important;
-    }
-  }
+  h1 { font-size: 24px; font-weight: 500; line-height: 1.4; color: var(--ink-1); }
+  h2 { font-size: 18px; font-weight: 500; line-height: 1.4; color: var(--ink-1); }
+  h3 { font-size: 16px; font-weight: 500; line-height: 1.4; color: var(--ink-1); }
 }
 
-/* ─── Components ──────────────────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════════════════
+   Component classes
+   ═══════════════════════════════════════════════════════════════════════════ */
 @layer components {
 
-  /* ── Card ── */
+  /* ── Card ──────────────────────────────────────────────────────────────── */
   .v-card {
-    background: var(--surface-1);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-sm);
-    border: 0.5px solid var(--border-color);
+    background:    var(--bg-card);
+    border-radius: var(--r-lg);
+    box-shadow:    var(--shadow-sm);
+    border:        0.5px solid var(--border);
     transition:
-      box-shadow var(--duration-base) var(--easing),
-      transform var(--duration-base) var(--easing);
+      box-shadow var(--t-base) var(--ease),
+      transform  var(--t-base) var(--ease);
   }
-  .v-card:hover {
-    box-shadow: var(--shadow-md);
-    transform: scale(1.02);
-  }
-  /* Prevent scale on cards that contain interactive content */
-  .v-card.no-hover:hover { transform: none; box-shadow: var(--shadow-sm); }
-  .v-card.interactive:hover { transform: scale(1.02); box-shadow: var(--shadow-md); }
+  .v-card:hover        { box-shadow: var(--shadow-md); transform: scale(1.01); }
+  .v-card.no-hover:hover  { box-shadow: var(--shadow-sm); transform: none; }
+  .v-card.interactive:hover { box-shadow: var(--shadow-md); transform: scale(1.02); }
 
-  /* ── Buttons ── */
+  /* ── Buttons ───────────────────────────────────────────────────────────── */
   .v-btn {
-    display: inline-flex;
-    align-items: center;
+    display:         inline-flex;
+    align-items:     center;
     justify-content: center;
-    gap: 6px;
-    height: 48px;
-    min-height: 48px;
-    padding: 0 24px;
-    border-radius: var(--radius-md);
-    font-size: 14px;
-    font-weight: 500;
-    border: none;
-    cursor: pointer;
+    gap:             6px;
+    height:          48px;
+    min-height:      48px;
+    padding:         0 24px;
+    border-radius:   var(--r-md);
+    font-size:       14px;
+    font-weight:     500;
+    border:          none;
+    cursor:          pointer;
     text-decoration: none;
+    white-space:     nowrap;
+    outline:         none;
     transition:
-      background var(--duration-base) var(--easing),
-      color var(--duration-base) var(--easing),
-      border-color var(--duration-base) var(--easing),
-      transform var(--duration-base) var(--easing),
-      box-shadow var(--duration-base) var(--easing);
-    outline: none;
-    white-space: nowrap;
+      background  var(--t-base) var(--ease),
+      color       var(--t-base) var(--ease),
+      transform   var(--t-fast) var(--ease),
+      box-shadow  var(--t-base) var(--ease);
   }
-  .v-btn:active  { transform: scale(0.98); }
-  .v-btn:focus-visible {
-    outline: 2px solid var(--teal-500);
-    outline-offset: 4px;
-  }
-  .v-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+  .v-btn:active        { transform: scale(0.98); }
+  .v-btn:disabled      { opacity: 0.42; cursor: not-allowed; }
+  .v-btn:focus-visible { outline: 2px solid var(--forest); outline-offset: 4px; }
 
-  .v-btn-primary {
-    background: var(--teal-500);
-    color: #fff;
-  }
-  .v-btn-primary:hover:not(:disabled) { background: var(--teal-900); }
+  .v-btn-primary { background: var(--forest); color: #FAF7F0; }
+  .v-btn-primary:hover:not(:disabled) { background: var(--forest-dark); }
 
   .v-btn-secondary {
-    background: var(--gray-50);
-    color: var(--gray-900);
-    border: 0.5px solid var(--border-color);
+    background:   var(--bg-sunken);
+    color:        var(--ink-2);
+    border:       0.5px solid var(--border);
   }
-  .v-btn-secondary:hover:not(:disabled) { background: #E8E6DF; }
+  .v-btn-secondary:hover:not(:disabled) { background: var(--bg-hover); }
 
-  .v-btn-danger {
-    background: var(--red-500);
-    color: #fff;
-  }
-  .v-btn-danger:hover:not(:disabled) { background: var(--red-900); }
+  .v-btn-danger { background: var(--terra); color: #FAF7F0; }
+  .v-btn-danger:hover:not(:disabled) { background: var(--terra-dark); }
 
   .v-btn-ghost {
-    display: inline-flex;
-    align-items: center;
+    display:         inline-flex;
+    align-items:     center;
     justify-content: center;
-    gap: 6px;
-    background: transparent;
-    color: var(--teal-500);
-    min-height: 36px;
-    height: auto;
-    padding: 0 12px;
-    border-radius: var(--radius-md);
-    font-size: 14px;
-    font-weight: 500;
-    border: none;
-    cursor: pointer;
+    gap:             6px;
+    background:      transparent;
+    color:           var(--forest);
+    height:          auto;
+    min-height:      36px;
+    padding:         0 12px;
+    border-radius:   var(--r-md);
+    font-size:       14px;
+    font-weight:     500;
+    border:          none;
+    cursor:          pointer;
     text-decoration: none;
-    transition:
-      background var(--duration-base) var(--easing),
-      color var(--duration-base) var(--easing);
-    outline: none;
+    outline:         none;
+    transition: background var(--t-base) var(--ease);
   }
-  .v-btn-ghost:hover:not(:disabled) { background: var(--teal-50); }
-  .v-btn-ghost:focus-visible {
-    outline: 2px solid var(--teal-500);
-    outline-offset: 4px;
-  }
+  .v-btn-ghost:hover:not(:disabled)   { background: var(--forest-light); }
+  .v-btn-ghost:focus-visible          { outline: 2px solid var(--forest); outline-offset: 4px; }
 
-  /* ── Inputs ── */
-  .v-input {
-    width: 100%;
-    height: 48px;
-    padding: 0 14px;
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-md);
-    font-size: 14px;
-    color: var(--ink-primary);
-    background: var(--surface-1);
-    outline: none;
-    transition: border-color var(--duration-fast);
+  /* ── Form controls ─────────────────────────────────────────────────────── */
+  .v-input, .v-select {
+    width:         100%;
+    height:        48px;
+    padding:       0 14px;
+    border:        1px solid var(--border);
+    border-radius: var(--r-md);
+    font-size:     14px;
+    color:         var(--ink-2);
+    background:    var(--bg-card);
+    outline:       none;
+    font-family:   inherit;
+    transition:    border-color var(--t-fast);
   }
-  .v-input::placeholder { color: var(--ink-muted); }
-  .v-input:focus { border-color: var(--teal-500); }
+  .v-select       { appearance: none; cursor: pointer; }
+  .v-input::placeholder { color: var(--ink-4); }
+  .v-input:focus, .v-select:focus { border-color: var(--forest); }
 
   .v-textarea {
-    width: 100%;
-    padding: 12px 14px;
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-md);
-    font-size: 14px;
-    color: var(--ink-primary);
-    background: var(--surface-1);
-    outline: none;
-    resize: none;
-    transition: border-color var(--duration-fast);
-    line-height: 1.6;
-    font-family: inherit;
+    width:         100%;
+    padding:       12px 14px;
+    border:        1px solid var(--border);
+    border-radius: var(--r-md);
+    font-size:     14px;
+    color:         var(--ink-2);
+    background:    var(--bg-card);
+    outline:       none;
+    resize:        none;
+    font-family:   inherit;
+    line-height:   1.6;
+    transition:    border-color var(--t-fast);
   }
-  .v-textarea:focus { border-color: var(--teal-500); }
-
-  .v-select {
-    width: 100%;
-    height: 48px;
-    padding: 0 14px;
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-md);
-    font-size: 14px;
-    color: var(--ink-primary);
-    background: var(--surface-1);
-    outline: none;
-    appearance: none;
-    cursor: pointer;
-    font-family: inherit;
-    transition: border-color var(--duration-fast);
-  }
-  .v-select:focus { border-color: var(--teal-500); }
+  .v-textarea:focus { border-color: var(--forest); }
 
   .v-label {
-    display: block;
-    font-size: 12px;
-    color: var(--ink-secondary);
+    display:       block;
+    font-size:     12px;
+    color:         var(--ink-3);
     margin-bottom: 6px;
-    line-height: 1.5;
+    line-height:   1.5;
   }
 
-  /* ── Data rows ── */
+  /* ── Data rows (two-column details table) ─────────────────────────────── */
   .v-data-row {
-    display: flex;
-    padding: 10px 0;
-    border-bottom: 0.5px solid var(--border-color);
-    gap: 12px;
+    display:       flex;
+    padding:       10px 0;
+    border-bottom: 0.5px solid var(--border);
+    gap:           12px;
   }
   .v-data-row:last-child { border-bottom: none; }
   .v-data-row-label {
-    width: 35%;
-    font-size: 12px;
-    color: var(--ink-secondary);
-    flex-shrink: 0;
-    line-height: 1.5;
+    width:      35%;
+    font-size:  12px;
+    color:      var(--ink-3);
+    flex-shrink:0;
+    line-height:1.5;
   }
   .v-data-row-value {
-    flex: 1;
-    font-size: 14px;
-    color: var(--ink-primary);
+    flex:        1;
+    font-size:   14px;
+    color:       var(--ink-2);
     line-height: 1.5;
-    word-break: break-word;
+    word-break:  break-word;
   }
 
-  /* ── Skeleton ── */
+  /* ── Skeleton loading ──────────────────────────────────────────────────── */
   .v-skeleton {
     background: linear-gradient(
       90deg,
-      #EAE7DF 25%,
-      #F3F0E8 50%,
-      #EAE7DF 75%
+      #E5DECE 25%,
+      #EDE6D9 50%,
+      #E5DECE 75%
     );
     background-size: 200% 100%;
     animation: skeleton-pulse 1.6s ease-in-out infinite;
-    border-radius: var(--radius-md);
+    border-radius: var(--r-md);
   }
   @keyframes skeleton-pulse {
-    0%   { background-position: 200% 0; }
+    0%   { background-position:  200% 0; }
     100% { background-position: -200% 0; }
   }
 
-  /* ── Collapsible ── */
-  .v-collapsible-content {
-    overflow: hidden;
-    transition:
-      height var(--duration-base) var(--easing),
-      opacity var(--duration-base) var(--easing);
-  }
-  .v-collapsible-content[data-open="false"] {
-    height: 0;
-    opacity: 0;
-  }
-  .v-collapsible-content[data-open="true"] {
-    opacity: 1;
-  }
-
-  /* ── Nav links ── */
+  /* ── Nav links ─────────────────────────────────────────────────────────── */
   .v-nav-link {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 12px;
-    border-radius: var(--radius-md);
-    font-size: 14px;
-    color: var(--ink-secondary);
+    display:         flex;
+    align-items:     center;
+    gap:             8px;
+    padding:         8px 12px;
+    border-radius:   var(--r-md);
+    font-size:       14px;
+    color:           var(--ink-3);
     text-decoration: none;
+    white-space:     nowrap;
     transition:
-      background var(--duration-fast) var(--easing),
-      color var(--duration-fast) var(--easing);
-    white-space: nowrap;
+      background var(--t-fast) var(--ease),
+      color      var(--t-fast) var(--ease);
   }
-  .v-nav-link:hover {
-    background: var(--teal-50);
-    color: var(--teal-500);
-  }
-  .v-nav-link.active {
-    background: var(--teal-50);
-    color: var(--teal-500);
-    font-weight: 500;
-  }
+  .v-nav-link:hover  { background: var(--forest-light); color: var(--forest); }
+  .v-nav-link.active { background: var(--forest-light); color: var(--forest); font-weight: 500; }
 }
